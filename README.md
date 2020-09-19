@@ -1,1 +1,1 @@
-# AMT_project1
+# STI_project1
