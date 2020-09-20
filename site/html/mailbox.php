@@ -5,6 +5,6 @@
     <link rel="stylesheet" href="./css/output.css">
 </head>
 <body>
-GG
+    GG
 </body>
 </html>

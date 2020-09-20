@@ -1,14 +1,13 @@
 <?php
-    require_once './functions/authentification.php';
+    require 'functions/authentification.php';
 
     // Call the authentification function if the form is submitted
     if (isset($_POST['username']) && isset($_POST['password'])) {
-        if(authentification($_POST['username'], $_POST['password'])){
+        if(authentication($_POST['username'], $_POST['password'])){
             // Redirect to the message page
             header ('location: ./mailbox.php');
         }
     }
-
 ?>
 
 <html lang="en">

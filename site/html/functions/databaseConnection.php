@@ -14,7 +14,6 @@ function dbConnect(){
         $connection->setAttribute(PDO::ATTR_ERRMODE,
             PDO::ERRMODE_EXCEPTION);
 
-        echo "Returning connection from databaseConnection.php<br>";
         return $connection;
 
     } catch(PDOException $e) {

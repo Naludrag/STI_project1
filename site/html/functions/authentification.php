@@ -1,7 +1,7 @@
 <?php
-require "./databaseConnection.php";
+require "functions/databaseConnection.php";
 
-function authentification($username, $password){
+function authentication($username, $password){
     // Database connection
     $db = dbConnect();
 
@@ -19,10 +19,7 @@ function authentification($username, $password){
 
         return true;
     }
-    else {
-        // Error message, wrong credentials or inactive account
-        return false;
-    }
+    return false;
 }
 ?>
 
