@@ -11,7 +11,6 @@ function authentication($username, $password){
     $dbUser = $db->query('SELECT * FROM User WHERE username="' . $username . '"')->fetch();
 
     if ($dbUser && password_verify($password, $dbUser['passwordHash']) && $dbUser['validity']) {
-        session_start ();
 
         // Saving the user's username to the session
         $_SESSION['username'] = $username;
