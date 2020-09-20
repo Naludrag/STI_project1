@@ -2,7 +2,7 @@
  <head>
   <title>PHP Test</title>
 
-  <link rel="stylesheet" href="../css/output.css">
+  <link rel="stylesheet" href="./css/output.css">
  </head>
  <body>
      <?php echo '<p>Hello World</p>';
