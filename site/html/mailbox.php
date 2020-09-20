@@ -30,10 +30,21 @@
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
 
         <script type="text/javascript">
-            function toggle_visibility_row(className) {
+            function toggle_visibility_row(className,callerId, firstText, secondText) {
+                let baseTextIsShown = true
+
                 let elements = document.getElementsByClassName(className);
                 for(let i = 0; i < elements.length; i++){
                     elements[i].style.display = elements[i].style.display === 'table-row' ? 'none' : 'table-row';
+                }
+
+                if(callerId != null){
+                    let caller = document.getElementById(callerId);
+                    if(caller.innerText === firstText){
+                        caller.innerText = secondText;
+                    } else {
+                        caller.innerText = firstText;
+                    }
                 }
             }
 
@@ -138,7 +149,7 @@
                                                     <div class="text-sm leading-5 text-gray-900"><?php echo $mail['fk_sender']; ?></div>
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-no-wrap">
-                                                    <button onclick="toggle_visibility_row('mail<?php echo ++$mailCounter; ?>Body');" class=" bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded">
+                                                    <button id="showMessage<?php echo ++$mailCounter; ?>-btn" onclick="toggle_visibility_row('mail<?php echo $mailCounter; ?>Body', 'showMessage<?php echo $mailCounter; ?>-btn', 'Show', 'Hide');" class=" bg-transparent hover:bg-green-500 active:bg-green-500 text-green-700 font-semibold hover:text-white active:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded">
                                                         Show
                                                     </button>
                                                 </td>
