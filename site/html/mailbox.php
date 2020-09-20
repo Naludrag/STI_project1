@@ -2,6 +2,7 @@
     session_start();
 
     $mails = null;
+    $mailCounter = 0;
 
     require "functions/mailman.php";
 
@@ -27,6 +28,17 @@
         <link href="./css/output.css" rel="stylesheet">
         <link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+
+        <script type="text/javascript">
+            function toggle_visibility(className) {
+                let elements = document.getElementsByClassName(className);
+                for(let i = 0; i < elements.length; i++){
+                    elements[i].style.display = elements[i].style.display === 'table-row' ? 'none' : 'table-row';
+                }
+
+            }
+        </script>
+
     </head>
 
     <body class="bg-gray-100 font-sans leading-normal tracking-normal">
@@ -43,47 +55,62 @@
                                     <thead>
                                     <tr>
                                         <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
-                                            Sender
+                                            Date
                                         </th>
                                         <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
                                             Subject
                                         </th>
-                                        <th class="px-6 py-3 bg-gray-50"></th>
-                                        <th class="px-6 py-3 bg-gray-50"></th>
-                                        <th class="px-6 py-3 bg-gray-50"></th>
+                                        <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                                            Sender
+                                        </th>
                                     </tr>
                                     </thead>
                                     <tbody class="bg-white divide-y divide-gray-200">
                                         <?php foreach($mails as $mail): ?>
                                             <tr>
                                                 <td class="px-6 py-4 whitespace-no-wrap">
-                                                    <div class="flex items-center">
-                                                        <div class="flex-shrink-0 h-10 w-10">
-                                                            <img class="h-10 w-10 rounded-full" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=4&amp;w=256&amp;h=256&amp;q=60" alt="">
-                                                        </div>
-                                                        <div class="ml-4">
-                                                            <div class="text-sm leading-5 font-medium text-gray-900">
-                                                                <?php echo $mail['fk_sender']; ?>
+                                                    <div class="text-sm leading-5 text-gray-900"><?php echo $mail['receptionDate']; ?></div>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-no-wrap">
+                                                    <div class="text-sm leading-5 text-gray-900"><?php echo $mail['object']; ?></div>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-no-wrap">
+                                                    <div class="text-sm leading-5 text-gray-900"><?php echo $mail['fk_sender']; ?></div>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-no-wrap">
+                                                    <button onclick="toggle_visibility('mail<?php echo ++$mailCounter; ?>Body');" class=" bg-transparent hover:bg-green-500 text-green-700 font-semibold hover:text-white py-2 px-4 border border-green-500 hover:border-transparent rounded">
+                                                        Show
+                                                    </button>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-no-wrap">
+                                                    <button class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+                                                        Respond
+                                                    </button>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-no-wrap">
+                                                    <button class="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded">
+                                                        Delete
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr style="display: none;" class="mail<?php echo $mailCounter; ?>Body">
+                                                <td colspan="6">
+                                                    <div style="display: none;" class="mail<?php echo $mailCounter; ?>Body max-w-sm w-full lg:max-w-full lg:flex">
+                                                        <div class="p-4 flex flex-col justify-between leading-normal">
+                                                            <div class="mb-8">
+                                                                <p class="text-sm text-gray-600 flex items-center">
+                                                                    <?php echo $mail['receptionDate']; ?>
+                                                                </p>
+                                                                <div class="text-gray-900 font-bold text-xl mb-2"><?php echo $mail['object']; ?></div>
+                                                                <p class="text-gray-700 text-base"><?php echo $mail['body']; ?></p>
                                                             </div>
-                                                            <!-- <div class="text-sm leading-5 text-gray-500">
-                                                                jane.cooper@example.com
-                                                            </div> -->
+                                                            <div class="flex items-center">
+                                                                <div class="text-sm">
+                                                                    <p class="text-gray-600"><?php echo $mail['fk_sender']; ?></p>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-no-wrap">
-                                                    <div class="text-sm leading-5 text-gray-900"> <?php echo $mail['object']; ?></div>
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-no-wrap">
-                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                                      Active
-                                                    </span>
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-500">
-                                                    Admin
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-no-wrap text-right text-sm leading-5 font-medium">
-                                                    <a href="#" class="text-indigo-600 hover:text-indigo-900">Edit</a>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
