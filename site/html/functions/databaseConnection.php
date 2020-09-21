@@ -9,7 +9,7 @@ function dbConnect(){
          **************************************/
 
         // Connect to SQLite database in file
-        $connection = new PDO('sqlite:/usr/share/nginx/databases/database.sqlite');
+        $connection = new PDO('sqlite:/usr/share/nginx/databases/database.sqlite', null, null, array(PDO::ATTR_PERSISTENT => true));
         // Set errormode to exceptions
         $connection->setAttribute(PDO::ATTR_ERRMODE,
             PDO::ERRMODE_EXCEPTION);

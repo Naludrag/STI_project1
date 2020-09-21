@@ -20,13 +20,7 @@
     // If receiver, object and body are set, we have to send a message
     echo 'before check sending'; // DEBUG
     if(isset($_POST['receiver']) && isset($_POST['object']) && isset($_POST['body'])){
-
-        echo 'after check sending, before insert'; // DEBUG
-        echo $_SESSION['username'].$_POST['receiver'].$_POST['object']. $_POST['body']; // DEBUG
-
         sendMail($_SESSION['username'], $_POST['receiver'], $_POST['object'], $_POST['body']);
-
-        echo 'after insert'; // DEBUG
     }
 
 ?>
@@ -99,7 +93,7 @@
                                         <option><?php echo $activeUser['username']; ?></option>
                                         <?php endforeach; ?>
                                     </datalist>
-                                    <input name="receiver" autoComplete="on" list="contacts" class="block appearance-none w-full bg-grey-lighter border border-grey-lighter text-grey-darker py-3 px-4 pr-8 rounded" placeholder="Who is the lucky one?"/>
+                                    <input required name="receiver" autoComplete="on" list="contacts" class="block appearance-none w-full bg-grey-lighter border border-grey-lighter text-grey-darker py-3 px-4 pr-8 rounded" placeholder="Who is the lucky one?"/>
                                     <div class="pointer-events-none absolute pin-y pin-r flex items-center px-2 text-grey-darker">
                                         <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
                                     </div>
@@ -110,7 +104,7 @@
                                     <label class="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2" for="grid-last-name">
                                         Object
                                     </label>
-                                    <input name="object" class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4" id="grid-zip" type="text" placeholder="What's the object of your email?">
+                                    <input required name="object" class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4" id="grid-zip" type="text" placeholder="What's the object of your email?">
                                 </div>
                             </div>
                             <div class="-mx-3 md:flex mb-6">
@@ -118,7 +112,7 @@
                                     <label class="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2" for="grid-password">
                                         Body
                                     </label>
-                                    <textarea name="body" class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4 mb-3" id="grid-password" type="password" placeholder="Write to your heart's content!"></textarea>
+                                    <textarea required name="body" class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4 mb-3" id="grid-password" type="password" placeholder="Write to your heart's content!"></textarea>
                                 </div>
                             </div>
                             <div class="">
@@ -177,12 +171,15 @@
                                                     </button>
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-no-wrap">
-                                                    <button class="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded">
-                                                        Delete
-                                                    </button>
+                                                    <form action="" method="POST" class="m-0">
+                                                        <input type="hidden" name="deleteMail" value="true">
+                                                        <button type="submit" class="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded">
+                                                            Delete
+                                                        </button>
+                                                    </form>
                                                 </td>
                                             </tr>
-                                        <!-- SHOW/HIDE MAIL -->
+                                            <!-- SHOW/HIDE MAIL -->
                                             <tr style="display: none;" class="mail<?php echo $mailCounter; ?>Body">
                                                 <td colspan="6">
                                                     <div style="display: none;" class="mail<?php echo $mailCounter; ?>Body max-w-sm w-full lg:max-w-full lg:flex">
@@ -206,32 +203,26 @@
                                             <!-- RESPOND MAIL -->
                                             <tr style="display: none;" class="respondToMail<?php echo $mailCounter; ?>Body">
                                                 <td colspan="6">
-                                                    <div style="display: none;" class="respondToMail<?php echo $mailCounter; ?>Body max-w-sm w-full lg:max-w-full lg:flex">
-                                                        <div class="p-4 flex justify-between leading-normal">
-                                                            <div class="mb-8">
-                                                                <form action="" method="POST">
-                                                                    <div class="-mx-3 md:flex mb-6">
-                                                                        <div class="md:w-full px-3">
-                                                                            <label class="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2" for="grid-password">
-                                                                                Body
-                                                                            </label>
-                                                                            <textarea class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4 mb-3" id="grid-password" type="password" placeholder="Write to your heart's content!"></textarea>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="">
-                                                                        <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out">
+                                                    <form action="" method="POST" class="pt-6 px-8 flex flex-col">
+                                                        <div class="-mx-3 md:flex mb-6">
+                                                            <div class="md:w-full px-3">
+                                                                <label class="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2" for="grid-password">
+                                                                    Body
+                                                                </label>
+                                                                <textarea class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4 mb-3" id="grid-password" type="password" placeholder="Write to your heart's content!"></textarea>
+                                                            </div>
+                                                        </div>
+                                                        <div class="">
+                                                            <button type="submit" class="group relative w-full flex justify-center mb-4 py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out">
                                                                           <span class="absolute left-0 inset-y-0 flex items-center pl-3">
                                                                             <svg class="h-5 w-5 text-indigo-500 group-hover:text-indigo-400 transition ease-in-out duration-150" fill="currentColor" viewBox="0 0 20 20">
                                                                               <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
                                                                             </svg>
                                                                           </span>
-                                                                            Send
-                                                                        </button>
-                                                                    </div>
-                                                                </form>
-                                                            </div>
+                                                                Send
+                                                            </button>
                                                         </div>
-                                                    </div>
+                                                    </form>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
