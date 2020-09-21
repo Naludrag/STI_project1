@@ -6,7 +6,8 @@
     require_once "functions/humanResources.php";
     require_once "functions/dashboardManager.php";
 
-    if(isset($_SESSION['username'])&&!empty($_SESSION['username'])&&isset($_SESSION['admin'])&&!empty($_SESSION['admin']) && $_SESSION['admin'] == 1){
+    if(isset($_SESSION['username'])&&!empty($_SESSION['username'])
+        &&isset($_SESSION['admin'])&&!empty($_SESSION['admin']) && $_SESSION['admin'] == 1){
         $users = retrieveUsers(0);
 
         // Remove the current user from the users list
@@ -22,6 +23,12 @@
         // If the user isn't logged in, he will be redirected to the login page
         header ('location: login.php');
         exit();
+    }
+
+    if(isset($_POST['changeValidityUsername'])&&!empty($_POST['changeValidityUsername'])
+        &&isset($_POST['changeValidityCurrent'])){
+
+        changeValidity($_POST['changeValidityUsername'], $_POST['changeValidityCurrent']);
     }
 
     if(isset($_POST['deleteUser'])&&!empty($_POST['deleteUser'])){
@@ -158,9 +165,13 @@
                                             <div class="text-sm leading-5 text-gray-900"><?php echo adaptRoleText($user['admin']); ?></div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-no-wrap">
-                                            <button id="Validity<?php echo $user['username']; ?>-btn" onclick="" class="bg-transparent hover:bg-<?php echo adaptValidityColor($user['validity']) ?>-500 text-<?php echo adaptValidityColor($user['validity']) ?>-700 font-semibold hover:text-white py-2 px-4 border border-<?php echo adaptValidityColor($user['validity']) ?>-500 hover:border-transparent rounded">
-                                                <?php echo adaptValidityText($user['validity']) ?>
-                                            </button>
+                                            <form action="" method="POST" class="m-0">
+                                                <input type="hidden" name="changeValidityUsername" value="<?php echo $user['username']; ?>">
+                                                <input type="hidden" name="changeValidityCurrent" value="<?php echo $user['validity']; ?>">
+                                                <button class="bg-transparent hover:bg-<?php echo adaptValidityColor($user['validity']) ?>-500 text-<?php echo adaptValidityColor($user['validity']) ?>-700 font-semibold hover:text-white py-2 px-4 border border-<?php echo adaptValidityColor($user['validity']) ?>-500 hover:border-transparent rounded">
+                                                    <?php echo adaptValidityText($user['validity']) ?>
+                                                </button>
+                                            </form>
                                         </td>
                                         <td class="px-6 py-4 whitespace-no-wrap">
                                             <button id="changePwd<?php echo $user['username']; ?>-btn" onclick="" class=" bg-transparent hover:bg-blue-500 active:bg-blue-500 text-blue-700 font-semibold hover:text-white active:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">

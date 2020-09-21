@@ -35,3 +35,22 @@ function deleteUser($username){
         header("Refresh:0");
     }
 }
+
+function changeValidity($username, $currentValidity){
+    echo "Current validity : " . $currentValidity . "<br>";
+    if($currentValidity == 1){
+        $newValidity = 0;
+    } else {
+        $newValidity = 1;
+    }
+
+    echo "Validity after flip : " . $newValidity . "<br>";
+
+    $db = dbConnect();
+
+    $sql = 'UPDATE User SET validity=:validity WHERE username=:username';
+    $sth = $db->prepare($sql);
+    $sth->execute(array('validity' => $newValidity, ':username' => $username));
+
+    header("Refresh:0");
+}
