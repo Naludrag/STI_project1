@@ -2,6 +2,10 @@
 
 require_once "functions/databaseConnection.php";
 
+function updateMailbox(){
+    header("Refresh:0");
+}
+
 function retrieveMail($username) {
     // Database connection
     $db = dbConnect();
@@ -30,4 +34,28 @@ function sendMail($sender, $receiver, $object, $body) {
 
     //close connection
     $db = null;
+
+    updateMailbox();
+}
+
+function checkOwnership($mailId, $user){
+    $db = dbConnect();
+
+    $sql = 'SELECT fk_receiver FROM Message WHERE id=:id';
+    $sth = $db->prepare($sql);
+    $sth->execute(array(':id' => $mailId));
+
+    return $user == $sth->fetch()['fk_receiver'];
+}
+
+function deleteMail($mailId){
+    if(checkOwnership($mailId, $_SESSION['username'])){
+        $db = dbConnect();
+
+        $sql = 'DELETE FROM Message WHERE id=:id';
+        $sth = $db->prepare($sql);
+        $sth->execute(array(':id' => $mailId));
+
+       updateMailbox();
+    }
 }
