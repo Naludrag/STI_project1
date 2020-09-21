@@ -1,0 +1,23 @@
+1. Check only the login page accessible for unregistered users
+2. Check admin page only accessible for admin users
+3. Check user can see his mails (order by reception date !!)
+4. Check new mail creation
+5. Check respond to mail
+6. Check delete mail
+7. Check user can change own password
+8. Check admin user can do all action above
+9. Check admin can add user
+10. Check new user can do what he need
+11. Check admin can remove user
+12. Check deleted user cannot log in
+13. Check admin can change password
+14. Check user with new password can log in
+15. Check admin can change validity (2 checks, active=>inactive & inactive=>active)
+16. Check user with new validity can/cannot log in (2 checks, active=>inactive & inactive=>active)
+
+
+
+17. Do readme with install info
+18. Check new installation work correctly
+
+
