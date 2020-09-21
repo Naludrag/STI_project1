@@ -17,9 +17,14 @@
         exit();
     }
 
-    // If receiver, object and body are set, we have to send a message
+    // Write a new message if receiver, object and body are set
     if(isset($_POST['receiver']) && isset($_POST['object']) && isset($_POST['body'])){
         sendMail($_SESSION['username'], $_POST['receiver'], $_POST['object'], $_POST['body']);
+    }
+
+    // Respond to a message if responseReceiver, responseObject and responseBody are set
+    if(isset($_POST['responseReceiver']) && isset($_POST['responseObject']) && isset($_POST['responseBody'])){
+        sendMail($_SESSION['username'], $_POST['responseReceiver'], 'RE: ' . $_POST['responseObject'], $_POST['responseBody']);
     }
 
 ?>
@@ -111,7 +116,7 @@
                                     <label class="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2" for="grid-password">
                                         Body
                                     </label>
-                                    <textarea required name="body" class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4 mb-3" id="grid-password" type="password" placeholder="Write to your heart's content!"></textarea>
+                                    <textarea required name="body" class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4 mb-3" placeholder="Write to your heart's content!"></textarea>
                                 </div>
                             </div>
                             <div class="">
@@ -203,7 +208,9 @@
                                                                 <label class="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2" for="grid-password">
                                                                     Body
                                                                 </label>
-                                                                <textarea class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4 mb-3" id="grid-password" type="password" placeholder="Write to your heart's content!"></textarea>
+                                                                <input name="responseReceiver" value="<?php echo $mail['fk_sender']; ?>" type="hidden">
+                                                                <input name="responseObject"   value="<?php echo $mail['object']; ?>"    type="hidden">
+                                                                <textarea required name="responseBody" class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4 mb-3" placeholder="Write to your heart's content!"></textarea>
                                                             </div>
                                                         </div>
                                                         <div class="">
