@@ -17,8 +17,12 @@
 
 
 17. Remove example.php, helloworld.php
-18. Added shutdown scripts (Linux, Windows)
-19. Do readme with install info
-20. Check new installation work correctly
+18. Add commentaries
+19. Use TailwindCSS tool to remove unnecessary CSS from output.css
+20. If not needed remove styles.css
+21. Remove Node files : package.json, package-loch.json and node_modules folder
+22. Added shutdown scripts (Linux, Windows)
+23. Do readme with install info
+24. Check new installation work correctly
 
 
