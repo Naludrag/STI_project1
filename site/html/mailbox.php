@@ -27,6 +27,11 @@
         sendMail($_SESSION['username'], $_POST['responseReceiver'], 'RE: ' . $_POST['responseObject'], $_POST['responseBody']);
     }
 
+    // Delete message from DB using his unique ID
+    if(isset($_POST['deleteMail'])){
+        deleteMail($_POST['deleteMail']);
+    }
+
 ?>
 
 <!DOCTYPE html>
@@ -171,7 +176,7 @@
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-no-wrap">
                                                     <form action="" method="POST" class="m-0">
-                                                        <input type="hidden" name="deleteMail" value="true">
+                                                        <input type="hidden" name="deleteMail" value="<?php echo $mail['id']?>">
                                                         <button type="submit" class="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded">
                                                             Delete
                                                         </button>
