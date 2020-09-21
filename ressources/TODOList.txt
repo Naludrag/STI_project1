@@ -16,8 +16,8 @@
 16. Check user with new validity can/cannot log in (2 checks, active=>inactive & inactive=>active)
 
 
-
-17. Do readme with install info
-18. Check new installation work correctly
+17. Remove example.php, helloworld.php
+18. Do readme with install info
+19. Check new installation work correctly
 
 
