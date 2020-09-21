@@ -18,7 +18,6 @@
     }
 
     // If receiver, object and body are set, we have to send a message
-    echo 'before check sending'; // DEBUG
     if(isset($_POST['receiver']) && isset($_POST['object']) && isset($_POST['body'])){
         sendMail($_SESSION['username'], $_POST['receiver'], $_POST['object'], $_POST['body']);
     }
@@ -117,11 +116,6 @@
                             </div>
                             <div class="">
                                 <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out">
-                      <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-                        <svg class="h-5 w-5 text-indigo-500 group-hover:text-indigo-400 transition ease-in-out duration-150" fill="currentColor" viewBox="0 0 20 20">
-                          <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
-                        </svg>
-                      </span>
                                     Send
                                 </button>
                             </div>
@@ -214,11 +208,6 @@
                                                         </div>
                                                         <div class="">
                                                             <button type="submit" class="group relative w-full flex justify-center mb-4 py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out">
-                                                                          <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-                                                                            <svg class="h-5 w-5 text-indigo-500 group-hover:text-indigo-400 transition ease-in-out duration-150" fill="currentColor" viewBox="0 0 20 20">
-                                                                              <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
-                                                                            </svg>
-                                                                          </span>
                                                                 Send
                                                             </button>
                                                         </div>
