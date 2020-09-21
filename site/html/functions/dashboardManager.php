@@ -12,9 +12,10 @@ function adaptValidityColor($validity){
     if($validity == 1){
         return 'green';
     } else {
-        return 'grey';
+        return 'yellow';
     }
 }
+
 
 function adaptRoleText($role){
     if($role == 1){

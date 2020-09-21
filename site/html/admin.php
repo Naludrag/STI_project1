@@ -205,7 +205,7 @@
                                             <form action="" method="POST" class="m-0">
                                                 <input type="hidden" name="changeValidityUsername" value="<?php echo $user['username']; ?>">
                                                 <input type="hidden" name="changeValidityCurrent" value="<?php echo $user['validity']; ?>">
-                                                <button class="bg-transparent hover:bg-<?php echo adaptValidityColor($user['validity']) ?>-500 text-<?php echo adaptValidityColor($user['validity']) ?>-700 font-semibold hover:text-white py-2 px-4 border border-<?php echo adaptValidityColor($user['validity']) ?>-500 hover:border-transparent rounded">
+                                                <button class="bg-transparent hover:bg-<?php echo adaptValidityColor($user['validity']) ?>-500 text-<?php echo adaptValidityColor($user['validity']) ?>-700 font-semibold hover:text-white ?> py-2 px-4 border border-<?php echo adaptValidityColor($user['validity']) ?>-500 hover:border-transparent rounded">
                                                     <?php echo adaptValidityText($user['validity']) ?>
                                                 </button>
                                             </form>
