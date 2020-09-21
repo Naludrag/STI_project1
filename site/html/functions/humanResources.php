@@ -12,13 +12,20 @@ function retrieveUser($username) {
     return $sth->fetch();
 }
 
-function retrieveUsers($includeInactiveUsers) {
+function retrieveUsers($onlyActiveUsers) {
     // Database connection
     $db = dbConnect();
+    $sth = null;
 
-    $sql = 'SELECT username, validity, admin FROM User WHERE validity=:validity';
-    $sth = $db->prepare($sql);
-    $sth->execute(array(':validity' => $includeInactiveUsers));
+    if($onlyActiveUsers){
+        $sql = 'SELECT username, validity, admin FROM User WHERE validity=:validity';
+        $sth = $db->prepare($sql);
+        $sth->execute(array(':validity' => 1));
+    } else{
+        $sql = 'SELECT username, validity, admin FROM User';
+        $sth = $db->prepare($sql);
+        $sth->execute();
+    }
 
     return $sth->fetchAll();
 }

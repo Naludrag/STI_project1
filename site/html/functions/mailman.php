@@ -2,10 +2,6 @@
 
 require_once "functions/databaseConnection.php";
 
-function updateMailbox(){
-    header("Refresh:0");
-}
-
 function retrieveMail($username) {
     // Database connection
     $db = dbConnect();
@@ -35,7 +31,7 @@ function sendMail($sender, $receiver, $object, $body) {
     //close connection
     $db = null;
 
-    updateMailbox();
+    header("Refresh:0");
 }
 
 function checkOwnership($mailId, $user){
@@ -56,6 +52,6 @@ function deleteMail($mailId){
         $sth = $db->prepare($sql);
         $sth->execute(array(':id' => $mailId));
 
-       updateMailbox();
+        header("Refresh:0");
     }
 }
