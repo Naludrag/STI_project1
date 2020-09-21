@@ -1,7 +1,8 @@
 <?php
     session_start();
 
-    $users       = null;
+    $users               = null;
+    $passwordNotMatching = 0;
 
     require_once "functions/humanResources.php";
     require_once "functions/dashboardManager.php";
@@ -33,6 +34,16 @@
 
     if(isset($_POST['deleteUser'])&&!empty($_POST['deleteUser'])){
         deleteUser($_POST['deleteUser']);
+    }
+
+    if(isset($_POST['username']) && isset($_POST['newPassword']) && isset($_POST['newPasswordConfirmation'])){
+        // Check if the password and the confirmation match
+        $passwordNotMatching = $_POST['newPassword'] != $_POST['newPasswordConfirmation'];
+        if(!$passwordNotMatching){
+
+            // If they do the password is changed
+            changeUserPassword($_POST['username'], password_hash($_POST['newPassword'], PASSWORD_DEFAULT));
+        }
     }
 
 ?>
@@ -86,55 +97,81 @@
     <div class="w-full md:w-4/5 bg-gray-100">
         <div class="container bg-gray-100 pt-16 px-6">
 
-            <!-- NEW USER FORM
+            <!-- INFO MESSAGE -->
+            <?php
+            if ($passwordNotMatching) {
+                echo '<p class="text-red-600 text-xs italic mb-6">The new passwords for ' . $_POST['username'] . ' do not match</p>';
+            }
+            ?>
+
+            <!-- ADD USER -->
             <div class="shadow rounded-lg mb-4">
                 <div class="bg-gray-50 rounded-lg flex flex-col rounded-b-none border-b border-gray-200 hover:border-gray-400">
-                    <a onclick="toggle_visibility('writingZone')" class="rounded-lg rounded-b-none px-8 pt-6 pb-6 hover:bg-gray-200 hover:border-gray-400 text-left text-xs leading-4 font-medium text-gray-500 hover:text-gray-700 uppercase tracking-wider">
+                    <a onclick="toggle_visibility('AddingZone')" class="rounded-lg rounded-b-none px-8 pt-6 pb-6 hover:bg-gray-200 hover:border-gray-400 text-left text-xs leading-4 font-medium text-gray-500 hover:text-gray-700 uppercase tracking-wider">
                         Add a new user
                     </a>
                 </div>
-                <div style="display:none" class="writingZone bg-white rounded-lg pt-6 px-8 pb-8 flex flex-col rounded-t-none border-b border-gray-200">
+                <div style="display:none" class="AddingZone bg-white rounded-lg pt-6 px-8 pb-8 flex flex-col rounded-t-none border-b border-gray-200">
                     <form action="" method="POST">
                         <div class="-mx-3 md:flex mb-6">
                             <div class="md:w-full px-3">
                                 <label class="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2" for="grid-last-name">
-                                    Receiver
+                                    Username
                                 </label>
-                                <datalist id="contacts">
-                                    <?php foreach($activeUsers as $activeUser): ?>
-                                        <option><?php echo $activeUser['username']; ?></option>
-                                    <?php endforeach; ?>
-                                </datalist>
-                                <input required name="receiver" autoComplete="on" list="contacts" class="block appearance-none w-full bg-grey-lighter border border-grey-lighter text-grey-darker py-3 px-4 pr-8 rounded" placeholder="Who is the lucky one?"/>
-                                <div class="pointer-events-none absolute pin-y pin-r flex items-center px-2 text-grey-darker">
-                                    <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="-mx-3 md:flex mb-6">
-                            <div class="md:w-full px-3">
-                                <label class="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2" for="grid-last-name">
-                                    Object
-                                </label>
-                                <input required name="object" class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4" id="grid-zip" type="text" placeholder="What's the object of your email?">
+                                <input required name="username" class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4" type="text" placeholder="A sweet name for our newcomer?">
                             </div>
                         </div>
                         <div class="-mx-3 md:flex mb-6">
                             <div class="md:w-full px-3">
                                 <label class="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2" for="grid-password">
-                                    Body
+                                    Password
                                 </label>
-                                <textarea required name="body" class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4 mb-3" placeholder="Write to your heart's content!"></textarea>
+                                <input required name="password" class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4 mb-3" type="password" placeholder="******************"></input>
+                            </div>
+                        </div>
+                        <div class="-mx-3 md:flex mb-6">
+                            <div class="md:w-full px-3">
+                                <label class="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2" for="grid-password">
+                                    Confirm password
+                                </label>
+                                <input required name="passwordConfirmation" class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4 mb-3" type="password" placeholder="******************"></input>
+                                <?php
+                                if ($passwordNotMatching) {
+                                    echo '<p class="text-red-600 text-xs italic">Passwords do not match</p>';
+                                }
+                                ?>
+                            </div>
+                        </div>
+                        <div class="-mx-3 md:flex mb-6">
+                            <div class="md:w-full px-3">
+                                <label class="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2" for="grid-last-name">
+                                    Validity
+                                </label>
+                                <select required name="validity" class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4" type="text" placeholder="What's the object of your email?">
+                                    <option value="0">Active</option>
+                                    <option value="1">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="-mx-3 md:flex mb-6">
+                            <div class="md:w-full px-3">
+                                <label class="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2" for="grid-last-name">
+                                    Role
+                                </label>
+                                <select required name="role" class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4" type="text" placeholder="What's the object of your email?">
+                                    <option value="0">Collaborator</option>
+                                    <option value="1">Administrator</option>
+                                </select>
                             </div>
                         </div>
                         <div class="">
                             <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out">
-                                Send
+                                Add
                             </button>
                         </div>
                     </form>
                 </div>
-            </div> -->
+            </div>
             <br>
             <!-- USERS LIST -->
             <div class="flex flex-col">
@@ -174,7 +211,7 @@
                                             </form>
                                         </td>
                                         <td class="px-6 py-4 whitespace-no-wrap">
-                                            <button id="changePwd<?php echo $user['username']; ?>-btn" onclick="" class=" bg-transparent hover:bg-blue-500 active:bg-blue-500 text-blue-700 font-semibold hover:text-white active:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+                                            <button id="changePwd<?php echo $user['username']; ?>-btn" onclick="toggle_visibility_row('changePwd<?php echo $user['username']; ?>Body', 'changePwd<?php echo $user['username']; ?>-btn', 'Change password', 'Cancel');" class=" bg-transparent hover:bg-blue-500 active:bg-blue-500 text-blue-700 font-semibold hover:text-white active:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
                                                 Change password
                                             </button>
                                         </td>
@@ -187,29 +224,35 @@
                                             </form>
                                         </td>
                                     </tr>
-                                    <!-- RESPOND MAIL
-                                    <tr style="display: none;" class="respondToMail<?php echo $mailCounter; ?>Body">
+                                    <!-- RESPOND MAIL -->
+                                    <tr style="display: none;" class="changePwd<?php echo $user['username']; ?>Body">
                                         <td colspan="6">
                                             <form action="" method="POST" class="pt-6 px-8 flex flex-col">
                                                 <div class="-mx-3 md:flex mb-6">
                                                     <div class="md:w-full px-3">
                                                         <label class="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2" for="grid-password">
-                                                            Body
+                                                            Password
                                                         </label>
-                                                        <input name="responseReceiver" value="<?php echo $mail['fk_sender']; ?>" type="hidden">
-                                                        <input name="responseObject"   value="<?php echo $mail['object']; ?>"    type="hidden">
-                                                        <textarea required name="responseBody" class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4 mb-3" placeholder="Write to your heart's content!"></textarea>
+                                                        <input required name="newPassword" class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4 mb-3" type="password" placeholder="******************"></input>
+                                                    </div>
+                                                </div>
+                                                <div class="-mx-3 md:flex mb-6">
+                                                    <div class="md:w-full px-3">
+                                                        <label class="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2" for="grid-password">
+                                                            Confirm password
+                                                        </label>
+                                                        <input required name="newPasswordConfirmation" class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4 mb-3" type="password" placeholder="******************"></input>
                                                     </div>
                                                 </div>
                                                 <div class="">
-                                                    <button type="submit" class="group relative w-full flex justify-center mb-4 py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out">
-                                                        Send
+                                                    <input type="hidden" name="username" value="<?php echo $user['username']; ?>">
+                                                    <button type="submit" class="group relative w-full flex justify-center mb-6 py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out">
+                                                        Change password
                                                     </button>
                                                 </div>
                                             </form>
                                         </td>
                                     </tr>
-                                    -->
                                 <?php endforeach; ?>
                                 </tbody>
                             </table>
