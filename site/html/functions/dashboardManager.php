@@ -55,3 +55,9 @@ function changeValidity($username, $currentValidity){
 
     header("Refresh:0");
 }
+
+function adaptRolesSelection($userRole, $selectRoleOptionValue) {
+    if($userRole == $selectRoleOptionValue) {
+        return 'selected';
+    }
+}

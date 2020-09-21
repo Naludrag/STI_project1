@@ -57,10 +57,11 @@
     // Check if a password must be changed
     if(isset($_POST['username']) && isset($_POST['newPassword']) && isset($_POST['newPasswordConfirmation'])) {
         // Check if the password and the confirmation match
-        $passwordNotMatching = checkIfPasswordsMatch($_POST['newPassword'], $_POST['newPasswordConfirmation']);
-        if(!$passwordNotMatching) {
+        if(checkIfPasswordsMatch($_POST['newPassword'], $_POST['newPasswordConfirmation'])) {
             // If they do the password is changed
             changeUserPassword($_POST['username'], password_hash($_POST['newPassword'], PASSWORD_DEFAULT));
+        } else {
+            $passwordNotMatching = 1;
         }
     }
 
@@ -216,6 +217,16 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-no-wrap">
                                             <div class="text-sm leading-5 text-gray-900"><?php echo adaptRoleText($user['admin']); ?></div>
+                                            <!-- DEBUG
+                                            <form action="" method="POST">
+                                                <input type="hidden" name="changeRoleUsername" value="<?php echo $user['username']; ?>">
+                                                <select name='changeRoleAdmin' onchange='this.form.submit()' class="text-sm leading-5 text-gray-900">
+                                                    <option <?php echo adaptRolesSelection($_POST['admin'], 0); ?> value="0"><?php echo adaptRoleText(0); ?></option>
+                                                    <option <?php echo adaptRolesSelection($_POST['admin'], 1); ?> value="1"><?php echo adaptRoleText(1); ?></option>
+                                                </select>
+                                                <noscript><input type="submit" value="Submit"></noscript>
+                                            </form>
+                                            -->
                                         </td>
                                         <td class="px-6 py-4 whitespace-no-wrap">
                                             <form action="" method="POST" class="m-0">

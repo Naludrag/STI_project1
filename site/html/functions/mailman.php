@@ -6,7 +6,7 @@ function retrieveMail($username) {
     // Database connection
     $db = dbConnect();
 
-    $sql = 'SELECT * FROM Message WHERE fk_receiver=:receiver';
+    $sql = 'SELECT * FROM Message WHERE fk_receiver=:receiver ORDER BY receptionDate DESC';
     $sth = $db->prepare($sql);
     $sth->execute(array(':receiver' => $username));
 
