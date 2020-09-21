@@ -1,19 +1,14 @@
 <?php
-require "functions/databaseConnection.php";
+require "databaseConnection.php";
+require "humanResources.php";
 
 function authentication($username, $password){
     // Database connection
     $db = dbConnect();
 
-    //$db = DB::connect();
-
-    // Check user existe, si oui, password_verify avec son hash puis check si le compte est actif
     // Check that the username exist, then check the password (password_verify()) and finally
     // check that the account is active.
-    $sql = 'SELECT * FROM User WHERE username=:username';
-    $sth = $db->prepare($sql);
-    $sth->execute(array(':username' => $username));
-    $userDetails = $sth->fetch();
+    $userDetails = retrieveUser($username);
 
     // Close connection
     $db = null;
@@ -22,7 +17,7 @@ function authentication($username, $password){
 
         // Saving the user's username to the session
         $_SESSION['username'] = $username;
-        $_SESSION['admin'] = $userDetails['validity'];
+        $_SESSION['admin'] = $userDetails['admin'];
 
         return true;
     }
