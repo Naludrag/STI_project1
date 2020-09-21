@@ -9,12 +9,10 @@
         $newPasswordIsSet    = 0;
 
         // Try to set a new password for the user if newPassword and newPasswordConfirmation are set
-        if(isset($_POST['newPassword']) && isset($_POST['newPasswordConfirmation'])){
-
+        if(isset($_POST['newPassword']) && isset($_POST['newPasswordConfirmation'])) {
             // Check if the password and the confirmation match
-            $passwordNotMatching = $_POST['newPassword'] != $_POST['newPasswordConfirmation'];
-            if(!$passwordNotMatching){
-
+            $passwordNotMatching = checkIfPasswordsMatch($_POST['newPassword'], $_POST['newPasswordConfirmation']);
+            if(!$passwordNotMatching) {
                 // If they do the password is changed
                 changeUserPassword($_SESSION['username'], password_hash($_POST['newPassword'], PASSWORD_DEFAULT));
                 $newPasswordIsSet = 1;

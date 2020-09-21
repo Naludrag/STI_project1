@@ -42,3 +42,35 @@ function changeUserPassword($username, $hash) {
     //close connection
     $db = null;
 }
+
+function checkIfPasswordsMatch($password, $newPassword) {
+    return $password == $newPassword;
+}
+function isUsernameUsed($username) {
+    $users = retrieveUsers(0);
+
+    // Check if username already exist
+    foreach ($users as $user) {
+        if($user['username'] == $username) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function addUser($username, $hash, $validity, $role) {
+    // Database connection
+    $db = dbConnect();
+
+    $sql = 'INSERT INTO User (username, passwordHash, validity, admin) VALUES (:username , :hash , :validity , :role)';
+    $sth = $db->prepare($sql);
+    $sth->execute(array(':username' => $username,
+        ':hash' => $hash,
+        ':validity' => $validity,
+        ':role' => $role));
+
+    //close connection
+    $db = null;
+
+    header("Refresh:0");
+}

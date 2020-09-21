@@ -3,6 +3,7 @@
 
     $users               = null;
     $passwordNotMatching = 0;
+    $usernameAlreadyUsed = 0;
 
     require_once "functions/humanResources.php";
     require_once "functions/dashboardManager.php";
@@ -32,15 +33,32 @@
         changeValidity($_POST['changeValidityUsername'], $_POST['changeValidityCurrent']);
     }
 
+    // Check if a user must be created
+    if(isset($_POST['username']) &&
+       isset($_POST['password']) &&
+       isset($_POST['passwordConfirmation']) &&
+       isset($_POST['validity']) &&
+       isset($_POST['role'])) {
+        // Check if the username already exist and the passwords match
+        if (isUsernameUsed($_POST['username'])) {
+            $usernameAlreadyUsed = 1;
+        } elseif(!checkIfPasswordsMatch($_POST['password'], $_POST['passwordConfirmation'])) {
+            $passwordNotMatching = 1;
+        } else {
+            addUser($_POST['username'], password_hash($_POST['password'], PASSWORD_DEFAULT), $_POST['validity'], $_POST['role']);
+        }
+    }
+
+    // Check if a user must be deleted
     if(isset($_POST['deleteUser'])&&!empty($_POST['deleteUser'])){
         deleteUser($_POST['deleteUser']);
     }
 
-    if(isset($_POST['username']) && isset($_POST['newPassword']) && isset($_POST['newPasswordConfirmation'])){
+    // Check if a password must be changed
+    if(isset($_POST['username']) && isset($_POST['newPassword']) && isset($_POST['newPasswordConfirmation'])) {
         // Check if the password and the confirmation match
-        $passwordNotMatching = $_POST['newPassword'] != $_POST['newPasswordConfirmation'];
-        if(!$passwordNotMatching){
-
+        $passwordNotMatching = checkIfPasswordsMatch($_POST['newPassword'], $_POST['newPasswordConfirmation']);
+        if(!$passwordNotMatching) {
             // If they do the password is changed
             changeUserPassword($_POST['username'], password_hash($_POST['newPassword'], PASSWORD_DEFAULT));
         }
@@ -99,8 +117,11 @@
 
             <!-- INFO MESSAGE -->
             <?php
+            if ($usernameAlreadyUsed) {
+                echo '<p class="text-red-600 text-xs italic mb-6">The username \'' . $_POST['username'] . '\' is already used.</p>';
+            }
             if ($passwordNotMatching) {
-                echo '<p class="text-red-600 text-xs italic mb-6">The new passwords for ' . $_POST['username'] . ' do not match</p>';
+                echo '<p class="text-red-600 text-xs italic mb-6">The new passwords for ' . $_POST['username'] . ' do not match.</p>';
             }
             ?>
 
@@ -135,11 +156,6 @@
                                     Confirm password
                                 </label>
                                 <input required name="passwordConfirmation" class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4 mb-3" type="password" placeholder="******************"></input>
-                                <?php
-                                if ($passwordNotMatching) {
-                                    echo '<p class="text-red-600 text-xs italic">Passwords do not match</p>';
-                                }
-                                ?>
                             </div>
                         </div>
                         <div class="-mx-3 md:flex mb-6">
@@ -148,8 +164,8 @@
                                     Validity
                                 </label>
                                 <select required name="validity" class="appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4" type="text" placeholder="What's the object of your email?">
-                                    <option value="0">Active</option>
-                                    <option value="1">Inactive</option>
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
                                 </select>
                             </div>
                         </div>
