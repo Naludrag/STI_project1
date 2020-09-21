@@ -17,7 +17,8 @@
 
 
 17. Remove example.php, helloworld.php
-18. Do readme with install info
-19. Check new installation work correctly
+18. Added shutdown scripts (Linux, Windows)
+19. Do readme with install info
+20. Check new installation work correctly
 
 
