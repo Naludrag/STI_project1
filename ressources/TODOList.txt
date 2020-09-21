@@ -14,15 +14,17 @@
 14. Check user with new password can log in
 15. Check admin can change validity (2 checks, active=>inactive & inactive=>active)
 16. Check user with new validity can/cannot log in (2 checks, active=>inactive & inactive=>active)
+17. Check admin can change roles (2 checks, admin=>collab & collab=>admin)
+18. Check user with new role can/cannot access certain pages (2 checks, admin=>collab & collab=>admin)
 
 
-17. Remove example.php, helloworld.php
-18. Add commentaries
-19. Use TailwindCSS tool to remove unnecessary CSS from output.css
-20. If not needed remove styles.css
-21. Remove Node files : package.json, package-loch.json and node_modules folder
-22. Added shutdown scripts (Linux, Windows)
-23. Do readme with install info
-24. Check new installation work correctly
+19. Remove example.php, helloworld.php
+20. Add commentaries
+21. Use TailwindCSS tool to remove unnecessary CSS from output.css
+22. If not needed remove styles.css
+23. Remove Node files : package.json, package-loch.json and node_modules folder
+24. Added shutdown scripts (Linux, Windows)
+25. Do readme with install info
+26. Check new installation work correctly
 
 
