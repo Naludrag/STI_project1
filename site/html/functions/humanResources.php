@@ -22,3 +22,16 @@ function retrieveUsers($includeInactiveUsers) {
 
     return $sth->fetchAll();
 }
+
+function changeUserPassword($username, $hash) {
+    // Database connection
+    $db = dbConnect();
+
+    $sql = 'UPDATE User SET passwordHash=:hash WHERE username=:username';
+    $sth = $db->prepare($sql);
+    $sth->execute(array(':hash'     => $hash,
+                        ':username' => $username));
+
+    //close connection
+    $db = null;
+}

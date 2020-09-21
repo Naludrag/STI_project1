@@ -19,6 +19,7 @@ function retrieveMail($username) {
 function sendMail($sender, $receiver, $object, $body) {
     // Database connection
     $db = dbConnect();
+
     $sql = 'INSERT INTO Message (object, body, receptionDate, fk_sender, fk_receiver) VALUES (:object , :body , :date , :sender, :receiver)';
     $sth = $db->prepare($sql);
     $sth->execute(array(':object' => $object,
