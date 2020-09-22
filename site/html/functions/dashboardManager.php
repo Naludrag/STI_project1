@@ -25,6 +25,14 @@ function adaptRoleText($role){
     }
 }
 
+function adaptRoleColor($role){
+    if($role == 1){
+        return 'purple';
+    } else {
+        return 'gray';
+    }
+}
+
 function deleteUser($username){
     if($_SESSION['admin'] == 1){
         $db = dbConnect();
@@ -38,26 +46,21 @@ function deleteUser($username){
 }
 
 function changeValidity($username, $currentValidity){
-    echo "Current validity : " . $currentValidity . "<br>";
-    if($currentValidity == 1){
-        $newValidity = 0;
-    } else {
-        $newValidity = 1;
-    }
-
-    echo "Validity after flip : " . $newValidity . "<br>";
-
     $db = dbConnect();
 
     $sql = 'UPDATE User SET validity=:validity WHERE username=:username';
     $sth = $db->prepare($sql);
-    $sth->execute(array('validity' => $newValidity, ':username' => $username));
+    $sth->execute(array('validity' => ($currentValidity + 1) % 2, ':username' => $username));
 
     header("Refresh:0");
 }
 
-function adaptRolesSelection($userRole, $selectRoleOptionValue) {
-    if($userRole == $selectRoleOptionValue) {
-        return 'selected';
-    }
+function changeRole($username, $currentRole) {
+    $db = dbConnect();
+
+    $sql = 'UPDATE User SET admin=:admin WHERE username=:username';
+    $sth = $db->prepare($sql);
+    $sth->execute(array('admin' => ($currentRole + 1) % 2, ':username' => $username));
+
+    header("Refresh:0");
 }

@@ -27,6 +27,12 @@
         exit();
     }
 
+    if(isset($_POST['changeRoleUsername'])&&!empty($_POST['changeRoleUsername'])
+        &&isset($_POST['changeRoleCurrent'])){
+
+        changeRole($_POST['changeRoleUsername'], $_POST['changeRoleCurrent']);
+    }
+
     if(isset($_POST['changeValidityUsername'])&&!empty($_POST['changeValidityUsername'])
         &&isset($_POST['changeValidityCurrent'])){
 
@@ -47,6 +53,11 @@
         } else {
             addUser($_POST['username'], password_hash($_POST['password'], PASSWORD_DEFAULT), $_POST['validity'], $_POST['role']);
         }
+    }
+
+    // Check if a role must be changed
+    if(isset($_POST['changeRoleUsername'])&&!empty($_POST['changeRoleIsAdmin'])){
+        deleteUser($_POST['deleteUser']);
     }
 
     // Check if a user must be deleted
@@ -77,6 +88,7 @@
     <title>Admin Dashboard</title>
 
     <link href="./css/output.css" rel="stylesheet">
+    <link href="./css/toggleButton.css" rel="stylesheet">
     <link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
 
@@ -216,17 +228,13 @@
                                             <div class="text-sm leading-5 text-gray-900"><?php echo $user['username']; ?></div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-no-wrap">
-                                            <div class="text-sm leading-5 text-gray-900"><?php echo adaptRoleText($user['admin']); ?></div>
-                                            <!-- DEBUG
-                                            <form action="" method="POST">
+                                            <form method="POST">
                                                 <input type="hidden" name="changeRoleUsername" value="<?php echo $user['username']; ?>">
-                                                <select name='changeRoleAdmin' onchange='this.form.submit()' class="text-sm leading-5 text-gray-900">
-                                                    <option <?php echo adaptRolesSelection($_POST['admin'], 0); ?> value="0"><?php echo adaptRoleText(0); ?></option>
-                                                    <option <?php echo adaptRolesSelection($_POST['admin'], 1); ?> value="1"><?php echo adaptRoleText(1); ?></option>
-                                                </select>
-                                                <noscript><input type="submit" value="Submit"></noscript>
+                                                <input type="hidden" name="changeRoleCurrent" value="<?php echo $user['admin']; ?>">
+                                                <button class="bg-transparent hover:bg-<?php echo adaptRoleColor($user['admin']) ?>-500 text-<?php echo adaptRoleColor($user['admin']) ?>-700 font-semibold hover:text-white ?> py-2 px-4 border border-<?php echo adaptRoleColor($user['admin']) ?>-500 hover:border-transparent rounded">
+                                                    <?php echo adaptRoleText($user['admin']) ?>
+                                                </button>
                                             </form>
-                                            -->
                                         </td>
                                         <td class="px-6 py-4 whitespace-no-wrap">
                                             <form action="" method="POST" class="m-0">

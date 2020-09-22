@@ -18,7 +18,7 @@
 18. Check user with new role can/cannot access certain pages (2 checks, admin=>collab & collab=>admin)
 
 
-19. Remove example.php, helloworld.php
+        19. Remove example.php, helloworld.php
 20. Add commentaries
 21. Use TailwindCSS tool to remove unnecessary CSS from output.css
 22. If not needed remove styles.css
