@@ -44,5 +44,5 @@ VALUES ('patrick', '$2y$10$2LgUrrRRYHb8G8NtOP3OGeMTvwE.Jr11zLx2AwXrMBl.tQIYIEGJK
 
 INSERT INTO Message (object, body, receptionDate, fk_sender, fk_receiver) 
 VALUES ('Pétanque', 'Oublie pas les boules pour la pétanque',  '2020-09-18 13:05:42', 'patrick', 'richard'),
-       ('Ricard',   'J ai pris du ricard pour la pétanque',    '2020-09-18 13:09:13', 'richard', 'patrick'),
-       ('Bières',   'J ai oublié les bières pour la pétanque', '2020-09-18 13:13:33', 'patrick', 'richard');
+       ('Ricard',   'J''ai pris du ricard pour la pétanque',    '2020-09-18 13:09:13', 'richard', 'patrick'),
+       ('Bières',   'J''ai oublié les bières pour la pétanque, c''est plutôt vraiment dommage je trouve...', '2020-09-18 13:13:33', 'patrick', 'richard');
