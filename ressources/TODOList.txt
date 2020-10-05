@@ -23,9 +23,9 @@
 21. Use TailwindCSS tool to remove unnecessary CSS from output.css
 22. If not needed remove styles.css
 23. Remove Node files : package.json, package-loch.json and node_modules folder
-24. Added shutdown scripts (Linux, Windows)
-        25. Do readme with install info
-        26. Check new installation work correctly
+    24. Added shutdown scripts (Linux, Windows)
+    25. Do readme with install info
+    26. Check new installation work correctly
 
 
 28. -> add error msg when sending new mail to a unknown dude
