@@ -1,8 +1,24 @@
+
 <?php
+
+/**
+ * Group:        2
+ * Authors:      Bécaud Arthur & Egremy Bruno
+ * Date:         05.10.2020
+ * Description:  Collection of authentication functions.
+ */
+
 require "databaseConnection.php";
 require "humanResources.php";
 
-function authentication($username, $password){
+/**
+ * Try to authenticate a user from given username and password
+ * and set session variables 'username' and 'admin'.
+ * @param $username Username used for the authentication.
+ * @param $password Password used fot the authentication.
+ * @return bool Return true if authentication was successful.
+ */
+function authentication($username, $password) {
     // Database connection
     $db = dbConnect();
 

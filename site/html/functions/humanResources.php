@@ -1,6 +1,20 @@
 <?php
+
+/**
+ * Group:        2
+ * Authors:      Bécaud Arthur & Egremy Bruno
+ * Date:         05.10.2020
+ * Description:  Collection of functions about users.
+ *               Most functions used by admin page were moved to the dashboardManager.php file.
+ */
+
 require_once "functions/databaseConnection.php";
 
+/**
+ * Retrieve the data of user from the database.
+ * @param $username
+ * @return mixed
+ */
 function retrieveUser($username) {
     // Database connection
     $db = dbConnect();
@@ -12,16 +26,21 @@ function retrieveUser($username) {
     return $sth->fetch();
 }
 
+/**
+ * Retrieve all users from the database.
+ * @param $onlyActiveUsers Retrieve only active user if true.
+ * @return array
+ */
 function retrieveUsers($onlyActiveUsers) {
     // Database connection
     $db = dbConnect();
     $sth = null;
 
-    if($onlyActiveUsers){
+    if ($onlyActiveUsers) {
         $sql = 'SELECT username, validity, admin FROM User WHERE validity=:validity';
         $sth = $db->prepare($sql);
         $sth->execute(array(':validity' => 1));
-    } else{
+    } else {
         $sql = 'SELECT username, validity, admin FROM User';
         $sth = $db->prepare($sql);
         $sth->execute();
@@ -30,6 +49,11 @@ function retrieveUsers($onlyActiveUsers) {
     return $sth->fetchAll();
 }
 
+/**
+ * Change user's password.
+ * @param $username
+ * @param $hash User's hashed password.
+ */
 function changeUserPassword($username, $hash) {
     // Database connection
     $db = dbConnect();
@@ -43,9 +67,21 @@ function changeUserPassword($username, $hash) {
     $db = null;
 }
 
-function checkIfPasswordsMatch($password, $newPassword) {
-    return $password == $newPassword;
+/**
+ * Check if the two given passwords match.
+ * @param $password1
+ * @param $password2
+ * @return bool Return true if passwords match.
+ */
+function checkIfPasswordsMatch($password1, $password2) {
+    return $password1 == $password2;
 }
+
+/**
+ * Check if a username exist in the database.
+ * @param $username User's name to search in the database.
+ * @return bool Return true if the user's name exist.
+ */
 function isUsernameUsed($username) {
     $users = retrieveUsers(0);
 
@@ -56,21 +92,4 @@ function isUsernameUsed($username) {
         }
     }
     return false;
-}
-
-function addUser($username, $hash, $validity, $role) {
-    // Database connection
-    $db = dbConnect();
-
-    $sql = 'INSERT INTO User (username, passwordHash, validity, admin) VALUES (:username , :hash , :validity , :role)';
-    $sth = $db->prepare($sql);
-    $sth->execute(array(':username' => $username,
-        ':hash' => $hash,
-        ':validity' => $validity,
-        ':role' => $role));
-
-    //close connection
-    $db = null;
-
-    header("Refresh:0");
 }

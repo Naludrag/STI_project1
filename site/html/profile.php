@@ -1,29 +1,35 @@
 <?php
     session_start();
 
-    // Check if the user is logged in
-    if(isset($_SESSION['username'])&&!empty($_SESSION['username'])){
+    require_once "functions/humanResources.php";
 
-        require_once "functions/humanResources.php";
-        $passwordNotMatching = 0;
-        $newPasswordIsSet    = 0;
+    $passwordNotMatching = 0;
+    $newPasswordIsSet    = 0;
 
-        // Try to set a new password for the user if newPassword and newPasswordConfirmation are set
-        if(isset($_POST['newPassword']) && isset($_POST['newPasswordConfirmation'])) {
-            // Check if the password and the confirmation match
-            if(checkIfPasswordsMatch($_POST['newPassword'], $_POST['newPasswordConfirmation'])) {
-                // If they do the password is changed
-                changeUserPassword($_SESSION['username'], password_hash($_POST['newPassword'], PASSWORD_DEFAULT));
-                $newPasswordIsSet = 1;
-            } else {
-                $passwordNotMatching = 1;
-            }
-        }
+    /* ------------------------------------ *
+     * SESSION TESTING & HEADER REDIRECTION *
+     * ------------------------------------ */
 
-    } else {
-        // If the user isn't logged in, he will be redirected to the login page
+    // If the user isn't logged in, he will be redirected to the login page
+    if (!isset($_SESSION['username']) || empty($_SESSION['username'])) {
         header ('location: login.php');
         exit();
+    }
+
+    /* ------------------------------------------------------- *
+     * POST VARIABLES TESTING & FUNCTIONALITY REQUEST HANDLING *
+     * ------------------------------------------------------- */
+
+    // Try to set a new password for the user if newPassword and newPasswordConfirmation are set
+    if(isset($_POST['newPassword']) && isset($_POST['newPasswordConfirmation'])) {
+        // Check if the password and the confirmation match
+        if(checkIfPasswordsMatch($_POST['newPassword'], $_POST['newPasswordConfirmation'])) {
+            // If they do the password is changed
+            changeUserPassword($_SESSION['username'], password_hash($_POST['newPassword'], PASSWORD_DEFAULT));
+            $newPasswordIsSet = 1;
+        } else {
+            $passwordNotMatching = 1;
+        }
     }
 
 ?>

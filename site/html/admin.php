@@ -8,44 +8,47 @@
     require_once "functions/humanResources.php";
     require_once "functions/dashboardManager.php";
 
-    if(isset($_SESSION['username'])&&!empty($_SESSION['username'])
-        &&isset($_SESSION['admin'])&&!empty($_SESSION['admin']) && $_SESSION['admin'] == 1){
-        $users = retrieveUsers(0);
+    /* ------------------------------------ *
+     * SESSION TESTING & HEADER REDIRECTION *
+     * ------------------------------------ */
 
-        // Remove the current user from the users list
-        $size = count($users, COUNT_NORMAL);
-        for ($i = 0; $i < $size; $i++) {
-            if($users[$i]['username'] == $_SESSION['username']){
-                unset($users[$i]);
-                break;
+    // Check if user is logged in
+    if (isset($_SESSION['username']) && !empty($_SESSION['username'])) {
+        // Check if user is an administrator
+        if (isset($_SESSION['admin']) && !empty($_SESSION['admin']) && $_SESSION['admin'] == 1) {
+
+            // Retrieve the users and remove the current user from the users list
+            $users = retrieveUsers(0);
+            $size = count($users, COUNT_NORMAL);
+            for ($i = 0; $i < $size; $i++) {
+                if($users[$i]['username'] == $_SESSION['username']) {
+                    unset($users[$i]);
+                    break;
+                }
             }
-        }
 
+        } else {
+            // If the user isn't an administrator, he will be redirected to the mailbox page
+            header ('location: mailbox.php');
+            exit();
+        }
     } else {
         // If the user isn't logged in, he will be redirected to the login page
         header ('location: login.php');
         exit();
     }
 
-    if(isset($_POST['changeRoleUsername'])&&!empty($_POST['changeRoleUsername'])
-        &&isset($_POST['changeRoleCurrent'])){
+    /* ------------------------------------------------------- *
+     * POST VARIABLES TESTING & FUNCTIONALITY REQUEST HANDLING *
+     * ------------------------------------------------------- */
 
-        changeRole($_POST['changeRoleUsername'], $_POST['changeRoleCurrent']);
-    }
-
-    if(isset($_POST['changeValidityUsername'])&&!empty($_POST['changeValidityUsername'])
-        &&isset($_POST['changeValidityCurrent'])){
-
-        changeValidity($_POST['changeValidityUsername'], $_POST['changeValidityCurrent']);
-    }
-
-    // Check if a user must be created
+    // Check if a user creation was requested
     if(isset($_POST['username']) &&
        isset($_POST['password']) &&
        isset($_POST['passwordConfirmation']) &&
        isset($_POST['validity']) &&
        isset($_POST['role'])) {
-        // Check if the username already exist and the passwords match
+        // Check if the username already exist and if the the passwords match
         if (isUsernameUsed($_POST['username'])) {
             $usernameAlreadyUsed = 1;
         } elseif(!checkIfPasswordsMatch($_POST['password'], $_POST['passwordConfirmation'])) {
@@ -55,20 +58,22 @@
         }
     }
 
-    // Check if a role must be changed
-    if(isset($_POST['changeRoleUsername'])&&!empty($_POST['changeRoleIsAdmin'])){
-        deleteUser($_POST['deleteUser']);
+    // Check if a role change was requested
+    if (isset($_POST['changeRoleUsername'])&&!empty($_POST['changeRoleUsername'])
+        &&isset($_POST['changeRoleCurrent'])) {
+        changeRole($_POST['changeRoleUsername'], $_POST['changeRoleCurrent']);
     }
 
-    // Check if a user must be deleted
-    if(isset($_POST['deleteUser'])&&!empty($_POST['deleteUser'])){
-        deleteUser($_POST['deleteUser']);
+    // Check if a validity change was requested
+    if (isset($_POST['changeValidityUsername'])&&!empty($_POST['changeValidityUsername'])
+        &&isset($_POST['changeValidityCurrent'])) {
+        changeValidity($_POST['changeValidityUsername'], $_POST['changeValidityCurrent']);
     }
 
-    // Check if a password must be changed
-    if(isset($_POST['username']) && isset($_POST['newPassword']) && isset($_POST['newPasswordConfirmation'])) {
+    // Check if a password change was requested
+    if (isset($_POST['username']) && isset($_POST['newPassword']) && isset($_POST['newPasswordConfirmation'])) {
         // Check if the password and the confirmation match
-        if(checkIfPasswordsMatch($_POST['newPassword'], $_POST['newPasswordConfirmation'])) {
+        if (checkIfPasswordsMatch($_POST['newPassword'], $_POST['newPasswordConfirmation'])) {
             // If they do the password is changed
             changeUserPassword($_POST['username'], password_hash($_POST['newPassword'], PASSWORD_DEFAULT));
         } else {
@@ -76,6 +81,10 @@
         }
     }
 
+    // Check if a user deletion was requested
+    if (isset($_POST['deleteUser'])&&!empty($_POST['deleteUser'])) {
+        deleteUser($_POST['deleteUser']);
+    }
 ?>
 
 <!DOCTYPE html>
@@ -92,9 +101,9 @@
     <link href="https://afeld.github.io/emoji-css/emoji.css" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
 
+
     <script type="text/javascript">
         function toggle_visibility_row(className,callerId, firstText, secondText) {
-            let baseTextIsShown = true
 
             let elements = document.getElementsByClassName(className);
             for(let i = 0; i < elements.length; i++){

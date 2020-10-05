@@ -1,7 +1,19 @@
 <?php
 
+/**
+ * Group:        2
+ * Authors:      Bécaud Arthur & Egremy Bruno
+ * Date:         05.10.2020
+ * Description:  Collection of mail functions.
+ */
+
 require_once "functions/databaseConnection.php";
 
+/**
+ * Retrieve the mail(s) of a user.
+ * @param $username
+ * @return array
+ */
 function retrieveMail($username) {
     // Database connection
     $db = dbConnect();
@@ -16,6 +28,13 @@ function retrieveMail($username) {
     return $sth->fetchAll();
 }
 
+/**
+ * Send a email.
+ * @param $sender
+ * @param $receiver
+ * @param $object
+ * @param $body
+ */
 function sendMail($sender, $receiver, $object, $body) {
     // Database connection
     $db = dbConnect();
@@ -34,6 +53,12 @@ function sendMail($sender, $receiver, $object, $body) {
     header("Refresh:0");
 }
 
+/**
+ * Check the ownership of a mail.
+ * @param $mailId
+ * @param $user
+ * @return bool True if the mail's receiver equal to given user.
+ */
 function checkOwnership($mailId, $user){
     $db = dbConnect();
 
@@ -44,6 +69,10 @@ function checkOwnership($mailId, $user){
     return $user == $sth->fetch()['fk_receiver'];
 }
 
+/**
+ * Delete a mail.
+ * @param $mailId
+ */
 function deleteMail($mailId){
     if(checkOwnership($mailId, $_SESSION['username'])){
         $db = dbConnect();

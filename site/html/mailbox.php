@@ -8,7 +8,12 @@
     require_once "functions/humanResources.php";
     require_once "functions/mailman.php";
 
-    if(isset($_SESSION['username'])&&!empty($_SESSION['username'])){
+    /* ------------------------------------ *
+     * SESSION TESTING & HEADER REDIRECTION *
+     * ------------------------------------ */
+
+    // Check if user is logged in
+    if (isset($_SESSION['username']) && !empty($_SESSION['username'])) {
         $activeUsers = retrieveUsers(1);
         $mails       = retrieveMail($_SESSION['username']);
     } else {
@@ -16,6 +21,10 @@
         header ('location: login.php');
         exit();
     }
+
+    /* ------------------------------------------------------- *
+     * POST VARIABLES TESTING & FUNCTIONALITY REQUEST HANDLING *
+     * ------------------------------------------------------- */
 
     // Write a new message if receiver, object and body are set
     if(isset($_POST['receiver']) && isset($_POST['object']) && isset($_POST['body'])){

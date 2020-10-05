@@ -1,22 +1,31 @@
 <?php
     session_start();
 
-    require 'functions/authentification.php';
+    require 'functions/authentication.php';
 
     $redirectToMailbox = false;
 
-    if(isset($_SESSION['username'])&&!empty($_SESSION['username'])){
+    /* ------------------------------------ *
+     * SESSION TESTING & HEADER REDIRECTION *
+     * ------------------------------------ */
+
+    // Check if user is logged in
+    if (isset($_SESSION['username']) && !empty($_SESSION['username'])) {
         $redirectToMailbox = true;
     }
 
-    // Call the authentification function if the form is submitted
+    /* ------------------------------------------------------- *
+     * POST VARIABLES TESTING & FUNCTIONALITY REQUEST HANDLING *
+     * ------------------------------------------------------- */
+
+    // Call the authentication function if the form is submitted
     if (isset($_POST['username']) && isset($_POST['password'])) {
-        if(authentication($_POST['username'], $_POST['password'])){
+        if (authentication($_POST['username'], $_POST['password'])) {
             $redirectToMailbox = true;
         }
     }
 
-    if($redirectToMailbox){
+    if ($redirectToMailbox) {
         header ('location: mailbox.php');
         exit();
     }
