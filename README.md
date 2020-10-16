@@ -4,6 +4,8 @@ Authors: Bécaud Arthur & Egremy Bruno
 1. Clone the repository.
 2. Execute the 'launch_\<OS>.<sh|bat>' script.
 3. Access the following web page : http://localhost:8080/login.php.
+## User manual
+You can find a user manual on how to navigate the website and use all the functionalities [here](./ressources/user_manual.md).
 ## Credentials
 There are two defaults accounts with the provided SQLITE database.
 
