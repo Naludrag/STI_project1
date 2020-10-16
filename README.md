@@ -16,5 +16,5 @@ By default, the SQLITE is already setup correctly but just in case you messed so
 
 1. Run the website, follow the steps from the 'How to run the website' section.
 2. Access the following web page : http://localhost:8080/phpliteadmin.php.
-3. Log in with the password 'admin'.
+3. Log in with the password '9M1fXq0Tx&vlDm^d3ej%gTrM#nAMLc'.
 4. Go to the 'Import' tab, browse and import './ressources/database/generate_database.sql' file.
