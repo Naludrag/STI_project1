@@ -61,7 +61,7 @@ function changeUserPassword($username, $hash) {
     $sql = 'UPDATE User SET passwordHash=:hash WHERE username=:username';
     $sth = $db->prepare($sql);
     $sth->execute(array(':hash'     => $hash,
-                        ':username' => $username));
+        ':username' => $username));
 
     //close connection
     $db = null;
