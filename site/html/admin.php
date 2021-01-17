@@ -55,7 +55,7 @@
         } elseif(!checkIfPasswordsMatch($_POST['password'], $_POST['passwordConfirmation'])) {
             $passwordNotMatching = 1;
         } else {
-            addUser($_POST['username'], password_hash($_POST['password'], PASSWORD_DEFAULT), $_POST['validity'], $_POST['role']);
+            addUser(SecurityUtils::sanitize_for_db($_POST['username']), password_hash($_POST['password'], PASSWORD_DEFAULT), $_POST['validity'], $_POST['role']);
         }
     }
 
@@ -232,9 +232,10 @@
                                 </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
-                                <?php foreach($users as $user): ?>
-                                    // !!! Sanitize all displayed attributes !!!
-                                    $user['username'] = SecurityUtils::sanitize_output($user['username']);
+                                <?php foreach($users as $user):
+                                    // !!! Sanitize all attributes that are user input !!!
+                                    $user['username'] = SecurityUtils::sanitize_output($user['username']); //Only username is a potential "user input"
+                                ?>
                                     <tr>
                                         <td class="px-6 py-4 whitespace-no-wrap">
                                             <div class="text-sm leading-5 text-gray-900"><?php echo $user['username']; ?></div>

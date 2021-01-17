@@ -11,7 +11,17 @@ class SecurityUtils {
      public static function sanitize_output($data) {
         // Strip tags from $data and convert special characters (+ double & single quotes) to HTML entities
         return htmlspecialchars(strip_tags($data), ENT_QUOTES, 'UTF-8');
-    }
+     }
+
+    /**
+     * Sanitize data for the database to prevent potential XSS on phpliteadmin
+     * @param $data string data to sanitize
+     * @return string sanitized string
+     */
+     public static function sanitize_for_db($data) {
+         // Strip tags from $data and convert special characters (+ double & single quotes) to HTML entities
+         return strip_tags($data);
+     }
 
     /**
      * Will return a const response for authentification of a user

@@ -1,4 +1,13 @@
 <?php
+$maxlifetime = 0;
+$path = '/';
+$domain = '';
+$secure = false;
+$httponly = true;
+$samesite = 'lax';
+
+// Used HttpOnly to avoid JavaScript to read the cookie and samesite to lax to limit csrf attacks
+session_set_cookie_params($maxlifetime, $path.'; samesite='.$samesite, $domain, $secure, $httponly);
 session_start();
 
 require 'functions/authentication.php';

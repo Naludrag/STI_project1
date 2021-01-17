@@ -30,6 +30,7 @@ function authentication($username, $password) {
     // Close connection
     $db = null;
 
+    // NEW : Added constant time authentification
     if (SecurityUtils::constant_time_authentication($password, $userDetails) && $userDetails['validity']) {
         // Saving the user's username to the session
         $_SESSION['username'] = $username;
@@ -37,14 +38,6 @@ function authentication($username, $password) {
 
         return true;
     }
-//    if ($userDetails && password_verify($password, $userDetails['passwordHash']) && $userDetails['validity']) {
-//
-//        // Saving the user's username to the session
-//        $_SESSION['username'] = $username;
-//        $_SESSION['admin'] = $userDetails['admin'];
-//
-//        return true;
-//    }
     return false;
 }
 

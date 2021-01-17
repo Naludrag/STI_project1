@@ -2,6 +2,7 @@
     session_start();
 
     require_once "functions/humanResources.php";
+    require_once "functions/securityUtils.php";
 
     $passwordNotMatching = 0;
     $newPasswordIsSet    = 0;
@@ -67,7 +68,7 @@
                                 <label class="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2" for="grid-last-name">
                                     Username
                                 </label>
-                                <input readonly class="font-medium text-gray-500 appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4" id="grid-zip" type="text" value="<?php echo $_SESSION['username']; ?>">
+                                <input readonly class="font-medium text-gray-500 appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4" id="grid-zip" type="text" value="<?php echo SecurityUtils::sanitize_output($_SESSION['username']); ?>">
                             </div>
                         </div>
                         <div class="-mx-3 md:flex mb-6">

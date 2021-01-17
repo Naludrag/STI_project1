@@ -7,6 +7,7 @@
 
     require_once "functions/humanResources.php";
     require_once "functions/mailman.php";
+    require_once "functions/securityUtils.php";
 
     /* ------------------------------------ *
      * SESSION TESTING & HEADER REDIRECTION *
@@ -28,12 +29,16 @@
 
     // Write a new message if receiver, object and body are set
     if(isset($_POST['receiver']) && isset($_POST['object']) && isset($_POST['body'])){
-        sendMail($_SESSION['username'], $_POST['receiver'], $_POST['object'], $_POST['body']);
+        sendMail($_SESSION['username'], SecurityUtils::sanitize_for_db($_POST['receiver']),
+            SecurityUtils::sanitize_for_db($_POST['object']),
+            SecurityUtils::sanitize_for_db($_POST['body']));
     }
 
     // Respond to a message if responseReceiver, responseObject and responseBody are set
     if(isset($_POST['responseReceiver']) && isset($_POST['responseObject']) && isset($_POST['responseBody'])){
-        sendMail($_SESSION['username'], $_POST['responseReceiver'], 'RE: ' . $_POST['responseObject'], $_POST['responseBody']);
+        sendMail($_SESSION['username'], SecurityUtils::sanitize_for_db($_POST['responseReceiver']),
+            'RE: ' . SecurityUtils::sanitize_for_db($_POST['responseObject']),
+            SecurityUtils::sanitize_for_db($_POST['responseBody']));
     }
 
     // Delete message from DB using his unique ID
@@ -108,7 +113,7 @@
                                     </label>
                                     <datalist id="contacts">
                                         <?php foreach($activeUsers as $activeUser): ?>
-                                        <option><?php echo $activeUser['username']; ?></option>
+                                        <option><?php echo SecurityUtils::sanitize_output($activeUser['username']); ?></option>
                                         <?php endforeach; ?>
                                     </datalist>
                                     <input required name="receiver" autoComplete="on" list="contacts" class="block appearance-none w-full bg-grey-lighter border border-grey-lighter text-grey-darker py-3 px-4 pr-8 rounded" placeholder="Who is the lucky one?"/>
@@ -162,7 +167,12 @@
                                     </tr>
                                     </thead>
                                     <tbody class="bg-white divide-y divide-gray-200">
-                                        <?php foreach($mails as $mail): ?>
+                                        <?php foreach($mails as $mail):
+                                            // !!! Sanitize all attributes that are user input !!!
+                                            $mail['object'] = SecurityUtils::sanitize_output($mail['object']);
+                                            $mail['fk_sender'] = SecurityUtils::sanitize_output($mail['fk_sender']);
+                                            $mail['body'] = SecurityUtils::sanitize_output($mail['body']);
+                                        ?>
                                             <tr>
                                                 <td class="px-6 py-4 whitespace-no-wrap">
                                                     <div class="text-sm leading-5 text-gray-900"><?php echo $mail['receptionDate']; ?></div>
