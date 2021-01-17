@@ -7,6 +7,7 @@
 
     require_once "functions/humanResources.php";
     require_once "functions/dashboardManager.php";
+    require_once "functions/securityUtils.php";
 
     /* ------------------------------------ *
      * SESSION TESTING & HEADER REDIRECTION *
@@ -140,10 +141,10 @@
             <!-- INFO MESSAGE -->
             <?php
             if ($usernameAlreadyUsed) {
-                echo '<p class="text-red-600 text-xs italic mb-6">The username \'' . $_POST['username'] . '\' is already used.</p>';
+                echo '<p class="text-red-600 text-xs italic mb-6">The username \'' . SecurityUtils::sanitize_output($_POST['username)']) . '\' is already used.</p>';
             }
             if ($passwordNotMatching) {
-                echo '<p class="text-red-600 text-xs italic mb-6">The new passwords for ' . $_POST['username'] . ' do not match.</p>';
+                echo '<p class="text-red-600 text-xs italic mb-6">The new passwords for ' . SecurityUtils::sanitize_output($_POST['username']) . ' do not match.</p>';
             }
             ?>
 
@@ -232,6 +233,8 @@
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
                                 <?php foreach($users as $user): ?>
+                                    // !!! Sanitize all displayed attributes !!!
+                                    $user['username'] = SecurityUtils::sanitize_output($user['username']);
                                     <tr>
                                         <td class="px-6 py-4 whitespace-no-wrap">
                                             <div class="text-sm leading-5 text-gray-900"><?php echo $user['username']; ?></div>
