@@ -43,10 +43,30 @@ class SecurityUtils {
      * @param $token
      */
     public static function verify_csrf_token($token){
-        if (empty($token) || !hash_equals($_SESSION['csrf-token'], $token)) {
+        if (empty($token) || !SecurityUtils::c_hash_equals($_SESSION['csrf-token'], $token)) {
             header ('location: login.php');
             exit();
         }
     }
 
+    /**
+     * Implementation of hash_equals for older version from https://www.php.net/manual/en/function.hash-equals.php#115635.git
+     * @param $str1
+     * @param $str2
+     * @return bool
+     */
+    private static function c_hash_equals($str1, $str2) {
+        if (!function_exists('hash_equals')) {
+            if (strlen($str1) != strlen($str2)) {
+                return false;
+            } else {
+                $res = $str1 ^ $str2;
+                $ret = 0;
+                for ($i = strlen($res) - 1; $i >= 0; $i--) $ret |= ord($res[$i]);
+                return !$ret;
+            }
+        } else {
+            return hash_equals($str1, $str2);
+        }
+    }
 }
