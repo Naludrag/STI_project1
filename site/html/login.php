@@ -29,27 +29,15 @@ if (isset($_SESSION['username']) && !empty($_SESSION['username'])) {
     $redirectToMailbox = true;
 }
 
-if (!empty($_POST['csrf-token'])) {
-    if (!hash_equals($_SESSION['csrf-token'], $_POST['csrf-token'])) {
-        header ('location: login.php');
-        exit();
-    }
-}
-
 /* ------------------------------------------------------- *
  * POST VARIABLES TESTING & FUNCTIONALITY REQUEST HANDLING *
  * ------------------------------------------------------- */
 
 // Call the authentication function if the form is submitted
 if (isset($_POST['username']) && isset($_POST['password'])) {
-    if (!empty($_POST['token'])) {
-        if (hash_equals($_SESSION['csrf-token'], $_POST['csrf-token'])) {
-            if (authentication($_POST['username'], $_POST['password'])) {
-                $redirectToMailbox = true;
-            }
-        } else {
-            /* Should log invalid tokens */
-        }
+    SecurityUtils::verify_csrf_token($_POST['csrf-token']);
+    if (authentication($_POST['username'], $_POST['password'])) {
+        $redirectToMailbox = true;
     }
 }
 
