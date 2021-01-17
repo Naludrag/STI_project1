@@ -30,7 +30,7 @@ class SecurityUtils {
      * @return bool true if the user was authenticated false otherwise
      */
     public static function constant_time_authentication($password, $userDetails){
-        // We will make a pass_verify in each case to have a const time in the repsonse
+        // We will make a pass_verify in each case to have a const time in the response
         if ($userDetails) {
             return password_verify($password, $userDetails['passwordHash']);
         } else {
@@ -40,7 +40,8 @@ class SecurityUtils {
     }
 
     /**
-     * @param $token
+     * Verify that the token passed in parameter is equal to the token session
+     * @param $token String token to compare to
      */
     public static function verify_csrf_token($token){
         if (empty($token) || !SecurityUtils::c_hash_equals($_SESSION['csrf-token'], $token)) {
@@ -51,9 +52,9 @@ class SecurityUtils {
 
     /**
      * Implementation of hash_equals for older version from https://www.php.net/manual/en/function.hash-equals.php#115635.git
-     * @param $str1
-     * @param $str2
-     * @return bool
+     * @param $str1 String hash of the first string to compare
+     * @param $str2 String hash of the second string to compare
+     * @return bool true if the 2 hashes are equal false otherwise
      */
     private static function c_hash_equals($str1, $str2) {
         if (!function_exists('hash_equals')) {
