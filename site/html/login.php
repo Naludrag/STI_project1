@@ -10,6 +10,12 @@ $samesite = 'lax';
 session_set_cookie_params($maxlifetime, $path.'; samesite='.$samesite, $domain, $secure, $httponly);
 session_start();
 
+// Reference : https://stackoverflow.com/questions/6287903/how-to-properly-add-cross-site-request-forgery-csrf-token-using-php
+if (empty($_SESSION['csrf-token'])) {
+    $_SESSION['csrf-token'] = bin2hex(openssl_random_pseudo_bytes(32)); // Would use random_bytes if we were using php7
+}
+$token = $_SESSION['csrf-token'];
+
 require 'functions/authentication.php';
 
 $redirectToMailbox = false;
@@ -23,14 +29,27 @@ if (isset($_SESSION['username']) && !empty($_SESSION['username'])) {
     $redirectToMailbox = true;
 }
 
+if (!empty($_POST['csrf-token'])) {
+    if (!hash_equals($_SESSION['csrf-token'], $_POST['csrf-token'])) {
+        header ('location: login.php');
+        exit();
+    }
+}
+
 /* ------------------------------------------------------- *
  * POST VARIABLES TESTING & FUNCTIONALITY REQUEST HANDLING *
  * ------------------------------------------------------- */
 
 // Call the authentication function if the form is submitted
 if (isset($_POST['username']) && isset($_POST['password'])) {
-    if (authentication($_POST['username'], $_POST['password'])) {
-        $redirectToMailbox = true;
+    if (!empty($_POST['token'])) {
+        if (hash_equals($_SESSION['csrf-token'], $_POST['csrf-token'])) {
+            if (authentication($_POST['username'], $_POST['password'])) {
+                $redirectToMailbox = true;
+            }
+        } else {
+            /* Should log invalid tokens */
+        }
     }
 }
 
@@ -55,7 +74,7 @@ if ($redirectToMailbox) {
             </h2>
         </div>
         <form class="mt-8" action="" method="POST">
-            <input type="hidden" name="remember" value="true">
+            <input type="hidden" name="csrf-token" value="<?php echo $token ?>">
             <div class="rounded-md shadow-sm">
                 <div>
                     <input aria-label="Username" name="username" type="text" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5" placeholder="Username">

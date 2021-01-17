@@ -14,7 +14,7 @@
      * ------------------------------------ */
 
     // Check if user is logged in
-    if (isset($_SESSION['username']) && !empty($_SESSION['username'])) {
+    if (isset($_SESSION['username']) && !empty($_SESSION['username']) && !empty($_SESSION['csrf-token'])) {
         // Check if user is an administrator
         if (isset($_SESSION['admin']) && !empty($_SESSION['admin']) && $_SESSION['admin'] == 1) {
 
@@ -49,6 +49,7 @@
        isset($_POST['passwordConfirmation']) &&
        isset($_POST['validity']) &&
        isset($_POST['role'])) {
+        SecurityUtils::verify_csrf_token($_POST['csrf-token']);
         // Check if the username already exist and if the the passwords match
         if (isUsernameUsed($_POST['username'])) {
             $usernameAlreadyUsed = 1;
@@ -62,17 +63,20 @@
     // Check if a role change was requested
     if (isset($_POST['changeRoleUsername'])&&!empty($_POST['changeRoleUsername'])
         &&isset($_POST['changeRoleCurrent'])) {
+        SecurityUtils::verify_csrf_token($_POST['csrf-token']);
         changeRole($_POST['changeRoleUsername'], $_POST['changeRoleCurrent']);
     }
 
     // Check if a validity change was requested
     if (isset($_POST['changeValidityUsername'])&&!empty($_POST['changeValidityUsername'])
         &&isset($_POST['changeValidityCurrent'])) {
+        SecurityUtils::verify_csrf_token($_POST['csrf-token']);
         changeValidity($_POST['changeValidityUsername'], $_POST['changeValidityCurrent']);
     }
 
     // Check if a password change was requested
     if (isset($_POST['username']) && isset($_POST['newPassword']) && isset($_POST['newPasswordConfirmation'])) {
+        SecurityUtils::verify_csrf_token($_POST['csrf-token']);
         // Check if the password and the confirmation match
         if (checkIfPasswordsMatch($_POST['newPassword'], $_POST['newPasswordConfirmation'])) {
             // If they do the password is changed
@@ -84,6 +88,7 @@
 
     // Check if a user deletion was requested
     if (isset($_POST['deleteUser'])&&!empty($_POST['deleteUser'])) {
+        SecurityUtils::verify_csrf_token($_POST['csrf-token']);
         deleteUser($_POST['deleteUser']);
     }
 ?>
@@ -157,6 +162,7 @@
                 </div>
                 <div style="display:none" class="AddingZone bg-white rounded-lg pt-6 px-8 pb-8 flex flex-col rounded-t-none border-b border-gray-200">
                     <form action="" method="POST">
+                        <input type="hidden" name="csrf-token" value="<?php echo $token ?>">
                         <div class="-mx-3 md:flex mb-6">
                             <div class="md:w-full px-3">
                                 <label class="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2" for="grid-last-name">
@@ -242,6 +248,7 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-no-wrap">
                                             <form method="POST">
+                                                <input type="hidden" name="csrf-token" value="<?php echo $token ?>">
                                                 <input type="hidden" name="changeRoleUsername" value="<?php echo $user['username']; ?>">
                                                 <input type="hidden" name="changeRoleCurrent" value="<?php echo $user['admin']; ?>">
                                                 <button class="bg-transparent hover:bg-<?php echo adaptRoleColor($user['admin']) ?>-500 text-<?php echo adaptRoleColor($user['admin']) ?>-700 font-semibold hover:text-white ?> py-2 px-4 border border-<?php echo adaptRoleColor($user['admin']) ?>-500 hover:border-transparent rounded">
@@ -251,6 +258,7 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-no-wrap">
                                             <form action="" method="POST" class="m-0">
+                                                <input type="hidden" name="csrf-token" value="<?php echo $token ?>">
                                                 <input type="hidden" name="changeValidityUsername" value="<?php echo $user['username']; ?>">
                                                 <input type="hidden" name="changeValidityCurrent" value="<?php echo $user['validity']; ?>">
                                                 <button class="bg-transparent hover:bg-<?php echo adaptValidityColor($user['validity']) ?>-500 text-<?php echo adaptValidityColor($user['validity']) ?>-700 font-semibold hover:text-white ?> py-2 px-4 border border-<?php echo adaptValidityColor($user['validity']) ?>-500 hover:border-transparent rounded">
@@ -265,6 +273,7 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-no-wrap">
                                             <form action="" method="POST" class="m-0">
+                                                <input type="hidden" name="csrf-token" value="<?php echo $token ?>">
                                                 <input type="hidden" name="deleteUser" value="<?php echo $user['username']; ?>">
                                                 <button type="submit" class="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded">
                                                     Delete
@@ -276,6 +285,7 @@
                                     <tr style="display: none;" class="changePwd<?php echo $user['username']; ?>Body">
                                         <td colspan="6">
                                             <form action="" method="POST" class="pt-6 px-8 flex flex-col">
+                                                <input type="hidden" name="csrf-token" value="<?php echo $token ?>">
                                                 <div class="-mx-3 md:flex mb-6">
                                                     <div class="md:w-full px-3">
                                                         <label class="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2" for="grid-password">

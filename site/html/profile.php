@@ -12,10 +12,11 @@
      * ------------------------------------ */
 
     // If the user isn't logged in, he will be redirected to the login page
-    if (!isset($_SESSION['username']) || empty($_SESSION['username'])) {
+    if (!isset($_SESSION['username']) || empty($_SESSION['username']) || empty($_SESSION['csrf-token'])) {
         header ('location: login.php');
         exit();
     }
+    $token = $_SESSION['csrf-token'];
 
     /* ------------------------------------------------------- *
      * POST VARIABLES TESTING & FUNCTIONALITY REQUEST HANDLING *
@@ -23,6 +24,8 @@
 
     // Try to set a new password for the user if newPassword and newPasswordConfirmation are set
     if(isset($_POST['newPassword']) && isset($_POST['newPasswordConfirmation'])) {
+        // Check if token is valid
+        SecurityUtils::verify_csrf_token($_POST['csrf-token']);
         // Check if the password and the confirmation match
         if(checkIfPasswordsMatch($_POST['newPassword'], $_POST['newPasswordConfirmation'])) {
             // If they do the password is changed
@@ -63,6 +66,7 @@
                 </div>
                 <div class="bg-white rounded-lg pt-6 px-8 pb-8  flex flex-col rounded-t-none border-b border-gray-200">
                     <form action="" method="POST">
+                        <input type="hidden" name="csrf-token" value="<?php echo $token ?>">
                         <div class="-mx-3 md:flex mb-6">
                             <div class="md:w-full px-3">
                                 <label class="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2" for="grid-last-name">

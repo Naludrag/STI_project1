@@ -14,14 +14,16 @@
      * ------------------------------------ */
 
     // Check if user is logged in
-    if (isset($_SESSION['username']) && !empty($_SESSION['username'])) {
+    if (isset($_SESSION['username']) && !empty($_SESSION['username']) && !empty($_SESSION['csrf-token'])) {
         $activeUsers = retrieveUsers(1);
         $mails       = retrieveMail($_SESSION['username']);
+        $token       = $_SESSION['csrf-token'];
     } else {
         // If the user isn't logged in, he will be redirected to the login page
         header ('location: login.php');
         exit();
     }
+
 
     /* ------------------------------------------------------- *
      * POST VARIABLES TESTING & FUNCTIONALITY REQUEST HANDLING *
@@ -29,6 +31,8 @@
 
     // Write a new message if receiver, object and body are set
     if(isset($_POST['receiver']) && isset($_POST['object']) && isset($_POST['body'])){
+        // Added csrf security and sanitize for db
+        SecurityUtils::verify_csrf_token($_POST['csrf-token']);
         sendMail($_SESSION['username'], SecurityUtils::sanitize_for_db($_POST['receiver']),
             SecurityUtils::sanitize_for_db($_POST['object']),
             SecurityUtils::sanitize_for_db($_POST['body']));
@@ -36,6 +40,8 @@
 
     // Respond to a message if responseReceiver, responseObject and responseBody are set
     if(isset($_POST['responseReceiver']) && isset($_POST['responseObject']) && isset($_POST['responseBody'])){
+        // Added csrf security and sanitize for db
+        SecurityUtils::verify_csrf_token($_POST['csrf-token']);
         sendMail($_SESSION['username'], SecurityUtils::sanitize_for_db($_POST['responseReceiver']),
             'RE: ' . SecurityUtils::sanitize_for_db($_POST['responseObject']),
             SecurityUtils::sanitize_for_db($_POST['responseBody']));
@@ -106,6 +112,7 @@
                     </div>
                     <div style="display:none" class="writingZone bg-white rounded-lg pt-6 px-8 pb-8 flex flex-col rounded-t-none border-b border-gray-200">
                         <form action="" method="POST">
+                            <input type="hidden" name="csrf-token" value="<?php echo $token ?>">
                             <div class="-mx-3 md:flex mb-6">
                                 <div class="md:w-full px-3">
                                     <label class="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2" for="grid-last-name">
@@ -195,6 +202,7 @@
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-no-wrap">
                                                     <form action="" method="POST" class="m-0">
+                                                        <input type="hidden" name="csrf-token" value="<?php echo $token ?>">
                                                         <input type="hidden" name="deleteMail" value="<?php echo $mail['id']?>">
                                                         <button type="submit" class="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded">
                                                             Delete
@@ -227,6 +235,7 @@
                                             <tr style="display: none;" class="respondToMail<?php echo $mailCounter; ?>Body">
                                                 <td colspan="6">
                                                     <form action="" method="POST" class="pt-6 px-8 flex flex-col">
+                                                        <input type="hidden" name="csrf-token" value="<?php echo $token ?>">
                                                         <div class="-mx-3 md:flex mb-6">
                                                             <div class="md:w-full px-3">
                                                                 <label class="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2" for="grid-password">

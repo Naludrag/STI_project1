@@ -39,4 +39,14 @@ class SecurityUtils {
         return false;
     }
 
+    /**
+     * @param $token
+     */
+    public static function verify_csrf_token($token){
+        if (empty($token) || !hash_equals($_SESSION['csrf-token'], $token)) {
+            header ('location: login.php');
+            exit();
+        }
+    }
+
 }
