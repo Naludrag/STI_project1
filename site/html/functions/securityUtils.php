@@ -1,7 +1,7 @@
 <?php
 class SecurityUtils {
 
-    const DUMMY_HASH = '2y$10$gzefWiF/TMENB.LykX3zxOr05NSLiX8VJBe2rl2qYf/Pq9D5aU6eO';
+    const DUMMY_HASH = '$2y$10$0G8VDQJbsMUg2uv5ATLCNO2MMdby5P7UsYgQ/5LxgeqQCuMa3PcUK';
 
     /**
      * Strip tags from $data and convert special characters (+ double & single quotes) to HTML entities data to sanitize
