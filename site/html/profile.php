@@ -6,6 +6,7 @@
 
     $passwordNotMatching = 0;
     $newPasswordIsSet    = 0;
+    $passwordStrength    = 0;
 
     /* ------------------------------------ *
      * SESSION TESTING & HEADER REDIRECTION *
@@ -28,10 +29,13 @@
         SecurityUtils::verify_csrf_token($_POST['csrf-token']);
         // Check if the password and the confirmation match
         if(checkIfPasswordsMatch($_POST['newPassword'], $_POST['newPasswordConfirmation'])) {
-            if (SecurityUtils::isPasswordStrong($_POST['password'])) {
+            var_dump($_POST['newPassword']);
+            if (SecurityUtils::isPasswordStrong($_POST['newPassword'])) {
                 // If they do the password is changed
                 changeUserPassword($_SESSION['username'], password_hash($_POST['newPassword'], PASSWORD_DEFAULT));
                 $newPasswordIsSet = 1;
+            } else {
+                $passwordStrength = 1;
             }
         } else {
             $passwordNotMatching = 1;
@@ -102,6 +106,8 @@
                                 <?php
                                 if ($passwordNotMatching) {
                                     echo '<p class="text-red-600 text-xs italic">Passwords do not match</p>';
+                                } else if ($passwordStrength) {
+                                    echo '<p class="text-indigo-600 text-xs italic">The new password does not match policy (8 car, 1 upper case letter, 1 number and 1 special car)</p>';
                                 }
                                 if ($newPasswordIsSet) {
                                     echo '<p class="text-indigo-600 text-xs italic">Your new password was successfully changed</p>';
