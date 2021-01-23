@@ -28,9 +28,11 @@
         SecurityUtils::verify_csrf_token($_POST['csrf-token']);
         // Check if the password and the confirmation match
         if(checkIfPasswordsMatch($_POST['newPassword'], $_POST['newPasswordConfirmation'])) {
-            // If they do the password is changed
-            changeUserPassword($_SESSION['username'], password_hash($_POST['newPassword'], PASSWORD_DEFAULT));
-            $newPasswordIsSet = 1;
+            if (SecurityUtils::isPasswordStrong($_POST['password'])) {
+                // If they do the password is changed
+                changeUserPassword($_SESSION['username'], password_hash($_POST['newPassword'], PASSWORD_DEFAULT));
+                $newPasswordIsSet = 1;
+            }
         } else {
             $passwordNotMatching = 1;
         }

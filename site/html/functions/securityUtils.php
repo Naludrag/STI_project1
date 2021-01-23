@@ -70,4 +70,19 @@ class SecurityUtils {
             return hash_equals($str1, $str2);
         }
     }
+
+    /**
+     * @param $password String password to check if policy is respected
+     * @return bool true if password contains a char uppercase, a char lowercase, a special char and a number
+     */
+    public static function isPasswordStrong($password) {
+        // Source: https://www.codexworld.com/how-to/validate-password-strength-in-php/
+        // Validate password strength
+        $uppercase = preg_match('@[A-Z]@', $password);
+        $lowercase = preg_match('@[a-z]@', $password);
+        $number = preg_match('@[0-9]@', $password);
+        $specialChars = preg_match('@[^\w]@', $password);
+
+        return $uppercase && $lowercase && $number && $specialChars && strlen($password) >= 8;
+    }
 }

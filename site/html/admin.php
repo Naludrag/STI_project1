@@ -4,6 +4,7 @@
     $users               = null;
     $passwordNotMatching = 0;
     $usernameAlreadyUsed = 0;
+    $passwordStrength    = 0;
 
     require_once "functions/humanResources.php";
     require_once "functions/dashboardManager.php";
@@ -12,7 +13,6 @@
     /* ------------------------------------ *
      * SESSION TESTING & HEADER REDIRECTION *
      * ------------------------------------ */
-
     // Check if user is logged in
     if (isset($_SESSION['username']) && !empty($_SESSION['username']) && !empty($_SESSION['csrf-token'])) {
         // Check if user is an administrator
@@ -38,10 +38,12 @@
         header ('location: login.php');
         exit();
     }
+    $token = $_SESSION['csrf-token'];
 
-    /* ------------------------------------------------------- *
-     * POST VARIABLES TESTING & FUNCTIONALITY REQUEST HANDLING *
-     * ------------------------------------------------------- */
+
+/* ------------------------------------------------------- *
+ * POST VARIABLES TESTING & FUNCTIONALITY REQUEST HANDLING *
+ * ------------------------------------------------------- */
 
     // Check if a user creation was requested
     if(isset($_POST['username']) &&
@@ -56,7 +58,11 @@
         } elseif(!checkIfPasswordsMatch($_POST['password'], $_POST['passwordConfirmation'])) {
             $passwordNotMatching = 1;
         } else {
-            addUser(SecurityUtils::sanitize_for_db($_POST['username']), password_hash($_POST['password'], PASSWORD_DEFAULT), $_POST['validity'], $_POST['role']);
+            if (SecurityUtils::isPasswordStrong($_POST['password'])) {
+                addUser(SecurityUtils::sanitize_for_db($_POST['username']), password_hash($_POST['password'], PASSWORD_DEFAULT), $_POST['validity'], $_POST['role']);
+            } else {
+                $passwordStrength = 1;
+            }
         }
     }
 
@@ -79,8 +85,12 @@
         SecurityUtils::verify_csrf_token($_POST['csrf-token']);
         // Check if the password and the confirmation match
         if (checkIfPasswordsMatch($_POST['newPassword'], $_POST['newPasswordConfirmation'])) {
-            // If they do the password is changed
-            changeUserPassword($_POST['username'], password_hash($_POST['newPassword'], PASSWORD_DEFAULT));
+            if (SecurityUtils::isPasswordStrong($_POST['password'])) {
+                // If they do the password is changed
+                changeUserPassword($_POST['username'], password_hash($_POST['newPassword'], PASSWORD_DEFAULT));
+            } else {
+                $passwordStrength = 1;
+            }
         } else {
             $passwordNotMatching = 1;
         }
@@ -150,6 +160,9 @@
             }
             if ($passwordNotMatching) {
                 echo '<p class="text-red-600 text-xs italic mb-6">The new passwords for ' . SecurityUtils::sanitize_output($_POST['username']) . ' do not match.</p>';
+            }
+            if ($passwordStrength) {
+                echo '<p class="text-red-600 text-xs italic mb-6">The new password does not match policy (8 car, 1 upper case letter, 1 number and 1 special car) for ' . SecurityUtils::sanitize_output($_POST['username']). ' </p>';
             }
             ?>
 
