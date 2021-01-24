@@ -45,7 +45,7 @@ class SecurityUtils {
      */
     public static function verify_csrf_token($token){
         if (empty($token) || !SecurityUtils::c_hash_equals($_SESSION['csrf-token'], $token)) {
-            header ('location: login.php');
+            header ('location: logout.php');
             exit();
         }
     }
