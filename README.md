@@ -1,5 +1,5 @@
 # STI Project 1
-Authors: Bécaud Arthur & Egremy Bruno
+Authors: Bécaud Arthur & Egremy Bruno  
 Modified by: Robin Müller & Stéphane Teixeira Carvalho
 ## How to run the website
 1. Clone the repository.
