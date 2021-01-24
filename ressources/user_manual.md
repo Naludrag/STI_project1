@@ -11,6 +11,7 @@ Authors: Bécaud Arthur & Egremy Bruno
 ** Require to be logged in to access the page.*
 ## Login
 The login page is the default page. You will be redirected to this page if you try to access another page in the above list. To access this page from another context, you can click on the 'MailBox' element in the sidebar.
+The page has been updated and now use reCaptcha to block bruteforce attacks.
 
 ![](assets/markdown-img-paste-20201015131513492.png)
 
@@ -32,7 +33,7 @@ To access this page, you have to click on your username ('PATRICK' on the follow
 
 ![](assets/markdown-img-paste-20201015150022184.png)
 
-You can change only change your password on the profile page.
+You can change only change your password on the profile page. The policy of the password have been improved you now have to use a password of at least 8 characters containing 1 Upper Case letter, 1 number and 1 special character. 
 
 ## Administrator
 To access this page, you have to click on the 'Manage Users' element in the sidebar. You will see a list of user in the right side of the page where you can change their role, their activity status and their password as well as deleting them.

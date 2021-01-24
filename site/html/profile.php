@@ -2,19 +2,22 @@
     session_start();
 
     require_once "functions/humanResources.php";
+    require_once "functions/securityUtils.php";
 
     $passwordNotMatching = 0;
     $newPasswordIsSet    = 0;
+    $passwordStrength    = 0;
 
     /* ------------------------------------ *
      * SESSION TESTING & HEADER REDIRECTION *
      * ------------------------------------ */
 
     // If the user isn't logged in, he will be redirected to the login page
-    if (!isset($_SESSION['username']) || empty($_SESSION['username'])) {
+    if (!isset($_SESSION['username']) || empty($_SESSION['username']) || empty($_SESSION['csrf-token'])) {
         header ('location: login.php');
         exit();
     }
+    $token = $_SESSION['csrf-token'];
 
     /* ------------------------------------------------------- *
      * POST VARIABLES TESTING & FUNCTIONALITY REQUEST HANDLING *
@@ -22,11 +25,18 @@
 
     // Try to set a new password for the user if newPassword and newPasswordConfirmation are set
     if(isset($_POST['newPassword']) && isset($_POST['newPasswordConfirmation'])) {
+        // Check if token is valid
+        SecurityUtils::verify_csrf_token($_POST['csrf-token']);
         // Check if the password and the confirmation match
         if(checkIfPasswordsMatch($_POST['newPassword'], $_POST['newPasswordConfirmation'])) {
-            // If they do the password is changed
-            changeUserPassword($_SESSION['username'], password_hash($_POST['newPassword'], PASSWORD_DEFAULT));
-            $newPasswordIsSet = 1;
+            var_dump($_POST['newPassword']);
+            if (SecurityUtils::isPasswordStrong($_POST['newPassword'])) {
+                // If they do the password is changed
+                changeUserPassword($_SESSION['username'], password_hash($_POST['newPassword'], PASSWORD_DEFAULT));
+                $newPasswordIsSet = 1;
+            } else {
+                $passwordStrength = 1;
+            }
         } else {
             $passwordNotMatching = 1;
         }
@@ -62,12 +72,13 @@
                 </div>
                 <div class="bg-white rounded-lg pt-6 px-8 pb-8  flex flex-col rounded-t-none border-b border-gray-200">
                     <form action="" method="POST">
+                        <input type="hidden" name="csrf-token" value="<?php echo $token ?>">
                         <div class="-mx-3 md:flex mb-6">
                             <div class="md:w-full px-3">
                                 <label class="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2" for="grid-last-name">
                                     Username
                                 </label>
-                                <input readonly class="font-medium text-gray-500 appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4" id="grid-zip" type="text" value="<?php echo $_SESSION['username']; ?>">
+                                <input readonly class="font-medium text-gray-500 appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4" id="grid-zip" type="text" value="<?php echo SecurityUtils::sanitize_output($_SESSION['username']); ?>">
                             </div>
                         </div>
                         <div class="-mx-3 md:flex mb-6">
@@ -95,6 +106,8 @@
                                 <?php
                                 if ($passwordNotMatching) {
                                     echo '<p class="text-red-600 text-xs italic">Passwords do not match</p>';
+                                } else if ($passwordStrength) {
+                                    echo '<p class="text-indigo-600 text-xs italic">The new password does not match policy (8 car, 1 upper case letter, 1 number and 1 special car)</p>';
                                 }
                                 if ($newPasswordIsSet) {
                                     echo '<p class="text-indigo-600 text-xs italic">Your new password was successfully changed</p>';

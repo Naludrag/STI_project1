@@ -7,20 +7,23 @@
 
     require_once "functions/humanResources.php";
     require_once "functions/mailman.php";
+    require_once "functions/securityUtils.php";
 
     /* ------------------------------------ *
      * SESSION TESTING & HEADER REDIRECTION *
      * ------------------------------------ */
 
     // Check if user is logged in
-    if (isset($_SESSION['username']) && !empty($_SESSION['username'])) {
+    if (isset($_SESSION['username']) && !empty($_SESSION['username']) && !empty($_SESSION['csrf-token'])) {
         $activeUsers = retrieveUsers(1);
         $mails       = retrieveMail($_SESSION['username']);
+        $token       = $_SESSION['csrf-token'];
     } else {
         // If the user isn't logged in, he will be redirected to the login page
         header ('location: login.php');
         exit();
     }
+
 
     /* ------------------------------------------------------- *
      * POST VARIABLES TESTING & FUNCTIONALITY REQUEST HANDLING *
@@ -28,16 +31,25 @@
 
     // Write a new message if receiver, object and body are set
     if(isset($_POST['receiver']) && isset($_POST['object']) && isset($_POST['body'])){
-        sendMail($_SESSION['username'], $_POST['receiver'], $_POST['object'], $_POST['body']);
+        // Added csrf security and sanitize for db
+        SecurityUtils::verify_csrf_token($_POST['csrf-token']);
+        sendMail($_SESSION['username'], SecurityUtils::sanitize_for_db($_POST['receiver']),
+            SecurityUtils::sanitize_for_db($_POST['object']),
+            SecurityUtils::sanitize_for_db($_POST['body']));
     }
 
     // Respond to a message if responseReceiver, responseObject and responseBody are set
     if(isset($_POST['responseReceiver']) && isset($_POST['responseObject']) && isset($_POST['responseBody'])){
-        sendMail($_SESSION['username'], $_POST['responseReceiver'], 'RE: ' . $_POST['responseObject'], $_POST['responseBody']);
+        // Added csrf security and sanitize for db
+        SecurityUtils::verify_csrf_token($_POST['csrf-token']);
+        sendMail($_SESSION['username'], SecurityUtils::sanitize_for_db($_POST['responseReceiver']),
+            'RE: ' . SecurityUtils::sanitize_for_db($_POST['responseObject']),
+            SecurityUtils::sanitize_for_db($_POST['responseBody']));
     }
 
     // Delete message from DB using his unique ID
     if(isset($_POST['deleteMail'])){
+        SecurityUtils::verify_csrf_token($_POST['csrf-token']);
         deleteMail($_POST['deleteMail']);
     }
 
@@ -101,6 +113,7 @@
                     </div>
                     <div style="display:none" class="writingZone bg-white rounded-lg pt-6 px-8 pb-8 flex flex-col rounded-t-none border-b border-gray-200">
                         <form action="" method="POST">
+                            <input type="hidden" name="csrf-token" value="<?php echo $token ?>">
                             <div class="-mx-3 md:flex mb-6">
                                 <div class="md:w-full px-3">
                                     <label class="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2" for="grid-last-name">
@@ -108,7 +121,7 @@
                                     </label>
                                     <datalist id="contacts">
                                         <?php foreach($activeUsers as $activeUser): ?>
-                                        <option><?php echo $activeUser['username']; ?></option>
+                                        <option><?php echo SecurityUtils::sanitize_output($activeUser['username']); ?></option>
                                         <?php endforeach; ?>
                                     </datalist>
                                     <input required name="receiver" autoComplete="on" list="contacts" class="block appearance-none w-full bg-grey-lighter border border-grey-lighter text-grey-darker py-3 px-4 pr-8 rounded" placeholder="Who is the lucky one?"/>
@@ -162,7 +175,12 @@
                                     </tr>
                                     </thead>
                                     <tbody class="bg-white divide-y divide-gray-200">
-                                        <?php foreach($mails as $mail): ?>
+                                        <?php foreach($mails as $mail):
+                                            // !!! Sanitize all attributes that are user input !!!
+                                            $mail['object'] = SecurityUtils::sanitize_output($mail['object']);
+                                            $mail['fk_sender'] = SecurityUtils::sanitize_output($mail['fk_sender']);
+                                            $mail['body'] = SecurityUtils::sanitize_output($mail['body']);
+                                        ?>
                                             <tr>
                                                 <td class="px-6 py-4 whitespace-no-wrap">
                                                     <div class="text-sm leading-5 text-gray-900"><?php echo $mail['receptionDate']; ?></div>
@@ -185,6 +203,7 @@
                                                 </td>
                                                 <td class="px-6 py-4 whitespace-no-wrap">
                                                     <form action="" method="POST" class="m-0">
+                                                        <input type="hidden" name="csrf-token" value="<?php echo $token ?>">
                                                         <input type="hidden" name="deleteMail" value="<?php echo $mail['id']?>">
                                                         <button type="submit" class="bg-transparent hover:bg-red-500 text-red-700 font-semibold hover:text-white py-2 px-4 border border-red-500 hover:border-transparent rounded">
                                                             Delete
@@ -217,6 +236,7 @@
                                             <tr style="display: none;" class="respondToMail<?php echo $mailCounter; ?>Body">
                                                 <td colspan="6">
                                                     <form action="" method="POST" class="pt-6 px-8 flex flex-col">
+                                                        <input type="hidden" name="csrf-token" value="<?php echo $token ?>">
                                                         <div class="-mx-3 md:flex mb-6">
                                                             <div class="md:w-full px-3">
                                                                 <label class="block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2" for="grid-password">

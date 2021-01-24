@@ -10,6 +10,7 @@
 
 require "databaseConnection.php";
 require "humanResources.php";
+require "securityUtils.php";
 
 /**
  * Try to authenticate a user from given username and password
@@ -29,8 +30,8 @@ function authentication($username, $password) {
     // Close connection
     $db = null;
 
-    if ($userDetails && password_verify($password, $userDetails['passwordHash']) && $userDetails['validity']) {
-
+    // NEW : Added constant time authentication
+    if (SecurityUtils::constant_time_authentication($password, $userDetails) && $userDetails['validity']) {
         // Saving the user's username to the session
         $_SESSION['username'] = $username;
         $_SESSION['admin'] = $userDetails['admin'];
