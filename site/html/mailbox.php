@@ -49,6 +49,7 @@
 
     // Delete message from DB using his unique ID
     if(isset($_POST['deleteMail'])){
+        SecurityUtils::verify_csrf_token($_POST['csrf-token']);
         deleteMail($_POST['deleteMail']);
     }
 
