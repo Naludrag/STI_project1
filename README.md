@@ -1,8 +1,9 @@
 # STI Project 1
 Authors: Bécaud Arthur & Egremy Bruno
+Modified by: Robin Müller & Stéphane Teixeira Carvalho
 ## How to run the website
 1. Clone the repository.
-2. Execute the 'launch_\<OS>.<sh|bat>' script.
+2. Execute the 'run-docker.<sh|bat>' script.
 3. Access the following web page : http://localhost:8080/login.php.
 ## User manual
 You can find a user manual on how to navigate the website and use all the functionalities [here](./ressources/user_manual.md).
