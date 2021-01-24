@@ -14,11 +14,11 @@ session_start();
 if (empty($_SESSION['csrf-token'])) {
     $_SESSION['csrf-token'] = bin2hex(openssl_random_pseudo_bytes(32)); // Would use random_bytes if we were using php7
 }
-$token = $_SESSION['csrf-token'];
 
 require 'functions/authentication.php';
 
 $redirectToMailbox = false;
+$error = "";
 
 /* ------------------------------------ *
  * SESSION TESTING & HEADER REDIRECTION *
@@ -35,9 +35,21 @@ if (isset($_SESSION['username']) && !empty($_SESSION['username'])) {
 
 // Call the authentication function if the form is submitted
 if (isset($_POST['username']) && isset($_POST['password'])) {
-    SecurityUtils::verify_csrf_token($_POST['csrf-token']);
-    if (authentication($_POST['username'], $_POST['password'])) {
-        $redirectToMailbox = true;
+    if(isset($_POST['g-recaptcha-response']) && !empty($_POST['g-recaptcha-response'])) {
+        $secret = '6Ld4FQwTAAAAAGfqLaIk4FJLztvmrAl93wb5Kyis';
+        $verifyResponse = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret='.$secret.'&response='.$_POST['g-recaptcha-response']);
+        $responseData = json_decode($verifyResponse);
+        if($responseData->success) {
+            if (authentication($_POST['username'], $_POST['password'])) {
+                $redirectToMailbox = true;
+            } else {
+                $error = "Username / password combination is invalid";
+            }
+        } else {
+            $error = 'Robot verification failed, please try again.';
+        }
+    } else {
+        $error = "Please check the CAPTCHA";
     }
 }
 
@@ -52,6 +64,7 @@ if ($redirectToMailbox) {
     <title>Login</title>
 
     <link rel="stylesheet" href="./css/output.css">
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body >
 <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -62,7 +75,6 @@ if ($redirectToMailbox) {
             </h2>
         </div>
         <form class="mt-8" action="" method="POST">
-            <input type="hidden" name="csrf-token" value="<?php echo $token ?>">
             <div class="rounded-md shadow-sm">
                 <div>
                     <input aria-label="Username" name="username" type="text" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5" placeholder="Username">
@@ -70,7 +82,14 @@ if ($redirectToMailbox) {
                 <div class="-mt-px">
                     <input aria-label="Password" name="password" type="password" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5" placeholder="Password">
                 </div>
-            </div>
+            </div><br />
+            <div class="g-recaptcha" data-sitekey="6Ld4FQwTAAAAAFhtfJzM7V7y0RFNCUc_GS3Q-aCE"></div> <br />
+
+            <?php
+            if ($error != "") {
+                echo '<div><p class="text-red-600 text-xs italic">'. $error .'</p></div>';
+            }
+            ?>
             <div class="mt-6">
                 <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out">
                       <span class="absolute left-0 inset-y-0 flex items-center pl-3">
