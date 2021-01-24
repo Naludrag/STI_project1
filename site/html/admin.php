@@ -5,6 +5,8 @@
     $passwordNotMatching = 0;
     $usernameAlreadyUsed = 0;
     $passwordStrength    = 0;
+    $validityChange      = 0;
+    $roleChange          = 0;
 
     require_once "functions/humanResources.php";
     require_once "functions/dashboardManager.php";
@@ -70,14 +72,22 @@
     if (isset($_POST['changeRoleUsername'])&&!empty($_POST['changeRoleUsername'])
         &&isset($_POST['changeRoleCurrent'])) {
         SecurityUtils::verify_csrf_token($_POST['csrf-token']);
-        changeRole($_POST['changeRoleUsername'], $_POST['changeRoleCurrent']);
+        if (!is_numeric($_POST['changeRoleCurrent']) || $_POST['changeRoleCurrent'] < 0 || $_POST['changeRoleCurrent'] > 1) {
+            $roleChange = 1;
+        } else {
+            changeRole($_POST['changeRoleUsername'], $_POST['changeRoleCurrent']);
+        }
     }
 
     // Check if a validity change was requested
     if (isset($_POST['changeValidityUsername'])&&!empty($_POST['changeValidityUsername'])
         &&isset($_POST['changeValidityCurrent'])) {
         SecurityUtils::verify_csrf_token($_POST['csrf-token']);
-        changeValidity($_POST['changeValidityUsername'], $_POST['changeValidityCurrent']);
+        if (!is_numeric($_POST['changeValidityCurrent']) || $_POST['changeValidityCurrent'] < 0 || $_POST['changeValidityCurrent'] > 1) {
+            $validityChange = 1;
+        } else {
+            changeValidity($_POST['changeValidityUsername'], $_POST['changeValidityCurrent']);
+        }
     }
 
     // Check if a password change was requested
@@ -163,6 +173,12 @@
             }
             if ($passwordStrength) {
                 echo '<p class="text-red-600 text-xs italic mb-6">The new password does not match policy (8 car, 1 upper case letter, 1 number and 1 special car) for ' . SecurityUtils::sanitize_output($_POST['username']). ' </p>';
+            }
+            if ($validityChange) {
+                echo '<p class="text-red-600 text-xs italic mb-6">Could not change validity</p>';
+            }
+            if ($roleChange) {
+                echo '<p class="text-red-600 text-xs italic mb-6">Could not change role</p>';
             }
             ?>
 
